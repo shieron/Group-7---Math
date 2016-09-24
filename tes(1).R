@@ -1,2 +1,0 @@
-tes <- matrix (data = c(1:9), nrow = 3, byrow = FALSE)
-tes <- tes %*% tes
