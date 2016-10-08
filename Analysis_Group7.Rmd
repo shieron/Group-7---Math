@@ -1,0 +1,68 @@
+---
+title: "Technology, Quality of Life, and Relationships"
+output: html_document
+---
+
+```{r loading libraries, echo=FALSE}
+#Loading libraries
+library(ggplot2)
+library(gridExtra)
+
+#Loading Data
+df <- read.csv("May_2013_Online_Dating_CSV.csv")
+
+```
+
+
+```{r gender, echo=FALSE}
+
+df[, "sex"] <- as.factor(df[, "sex"])
+#summary(df[, "sex"])
+
+## Need to add geom_text to add labels to the bars (help needed)
+gender <- ggplot(data = df, aes(x = sex, fill = sex)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1" = "Male", "2" = "Female")) +
+  labs(x = "Gender", y = "Count", title = "Gender")
+```
+
+
+```{r age, echo=FALSE}
+#summary(df$age)
+#str(df$age)
+
+age <- ggplot(data = df, aes(x = age)) + 
+  geom_histogram(binwidth = 5, color="black", fill="orange") + 
+  scale_x_continuous(limits = c(15,100), breaks = seq(0, 100, 10)) +
+  labs(x = "Age", y = "Frequency", title = "Age")
+```
+
+
+```{r race, echo=FALSE}
+
+df[, "race"] <- as.factor(df[, "race"])
+#summary(df$race)
+#str(df$race)
+
+r_race <- ggplot(data = df, aes(x=reorder(race, -table(race)[race]))) + 
+  geom_bar() + 
+  scale_x_discrete(labels=c('White','Black','Asian','Mixed','Native American','Other',"Don't Know",'Refused')) +
+  labs(x = "", y = "Count", title = "Race") +
+  coord_flip()
+```
+
+```{r employment, echo=FALSE}
+#summary(df$emplnw)
+#str(df$emplnw)
+df[, "emplnw"] <- as.factor(df[, "emplnw"])
+
+employment <- ggplot(data = df, aes(x=reorder(emplnw, -table(emplnw)[emplnw]))) + 
+  geom_bar() + 
+  scale_x_discrete(labels=c('Full-time','Part-time','Retired','Not employed','Self-employed','Disabled',"Student",'Other', "Refused")) +
+  labs(x = "", y = "Count", title = "Employment Level") + coord_flip()
+```
+
+#Who were the respondents
+```{r describtive_stats_1, echo=FALSE}
+grid.arrange(employment, gender, r_race, age)
+```
