@@ -10,7 +10,6 @@ library(gridExtra)
 
 #Loading Data
 df <- read.csv("May_2013_Online_Dating_CSV.csv")
-
 ```
 
 
@@ -26,9 +25,21 @@ gender <- ggplot(data = df, aes(x = sex, fill = sex)) +
   labs(x = "Gender", y = "Count", title = "Gender")
 ```
 
+```{r sexual orientation, echo=FALSE}
+# Sexual orientation plot
+df[, "lgbt"] <- as.factor(df[, "lgbt"])
+#summary(df$lgbt)
+#str(df$lgbt)
+
+sexual_orientation <- ggplot(data = df, aes(x = lgbt)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("Heterosexual", "Gay/lesbian", "Bisexual", "Other", "Don't know", "Refused")) + coord_flip() +
+  labs(x = "", y = "Count", title = "Sexual Orientation")
+  
+```
 
 ```{r age, echo=FALSE}
-# Age plot
+#Age plot
 #summary(df$age)
 #str(df$age)
 
@@ -36,8 +47,8 @@ age <- ggplot(data = df, aes(x = age)) +
   geom_histogram(binwidth = 5, color="black", fill="orange") + 
   scale_x_continuous(limits = c(15,100), breaks = seq(0, 100, 10)) +
   labs(x = "Age", y = "Frequency", title = "Age")
-```
 
+```
 
 ```{r race, echo=FALSE}
 # Race plot
@@ -52,6 +63,13 @@ r_race <- ggplot(data = df, aes(x=reorder(race, -table(race)[race]))) +
   coord_flip()
 ```
 
+
+#Who were the respondents (part 1)
+```{r describtive_stats_1, echo=FALSE}
+grid.arrange(gender, r_race, age, sexual_orientation)
+```
+
+
 ```{r employment, echo=FALSE}
 # Employment plot
 df[, "emplnw"] <- as.factor(df[, "emplnw"])
@@ -64,7 +82,45 @@ employment <- ggplot(data = df, aes(x=reorder(emplnw, -table(emplnw)[emplnw]))) 
   labs(x = "", y = "Count", title = "Employment Level") + coord_flip()
 ```
 
-#Who were the respondents
-```{r describtive_stats_1, echo=FALSE}
-grid.arrange(employment, gender, r_race, age)
+
+```{r income, echo=FALSE}
+# Income plot
+df[, "inc"] <- as.factor(df[, "inc"])
+#summary(df$inc)
+#str(df$inc)
+
+income <- ggplot(data = df, aes(x = inc)) + 
+  geom_bar() + coord_flip() +
+  scale_x_discrete(labels = c("1"="under 10k", "2"="10-20k", "3"="20-30k", "4"="30-40k", "5"="40-50k", "6"="50-75k", "7"="75-100k", "8"="100-150k", "9"="over 150k", "98"="Don't Know", "99"="Refused")) +
+  labs(x = "", y = "Count", title = "Income in thousands USD")
+  
 ```
+
+```{r education, echo=FALSE}
+# Education plot
+df[, "educ2"] <- as.factor(df[, "educ2"])
+#summary(df$educ2)
+#str(df$educ2)
+
+education <- ggplot(data = df, aes(x = educ2)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("Grade 1-8", "Incomplete high school", "Complete high school", "Some college", "Associate degree", "Bachelor's", "Some postgrad", "Master's/phd/professional", "Don't know", "Refused")) +
+  labs(x = "", y = "Count", title = "Education") + coord_flip()
+```
+
+
+```{r household size, echo=FALSE}
+# Household size plot
+df[, "hh1"] <- as.factor(df[, "hh1"])
+#summary(df$hh1)
+#str(df$hh1)
+
+household_size <- ggplot(data = df, aes(x = hh1)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1", "2", "3", "4", "5", "6+", "Don't know", "Refused")) +
+  labs(x = "", y = "Count", title = "Household Size")
+```
+
+#Who were the respondents (part 2)
+```{r describtive_stats_2, echo=FALSE}
+grid.arrange(employment, education, income, household_size)
