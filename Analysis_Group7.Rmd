@@ -15,11 +15,11 @@ df <- read.csv("May_2013_Online_Dating_CSV.csv")
 
 
 ```{r gender, echo=FALSE}
-
+# Gender plot
 df[, "sex"] <- as.factor(df[, "sex"])
 #summary(df[, "sex"])
+#str(df[, "sex"])
 
-## Need to add geom_text to add labels to the bars (help needed)
 gender <- ggplot(data = df, aes(x = sex, fill = sex)) + 
   geom_bar() + 
   scale_x_discrete(labels = c("1" = "Male", "2" = "Female")) +
@@ -28,6 +28,7 @@ gender <- ggplot(data = df, aes(x = sex, fill = sex)) +
 
 
 ```{r age, echo=FALSE}
+# Age plot
 #summary(df$age)
 #str(df$age)
 
@@ -39,7 +40,7 @@ age <- ggplot(data = df, aes(x = age)) +
 
 
 ```{r race, echo=FALSE}
-
+# Race plot
 df[, "race"] <- as.factor(df[, "race"])
 #summary(df$race)
 #str(df$race)
@@ -52,9 +53,10 @@ r_race <- ggplot(data = df, aes(x=reorder(race, -table(race)[race]))) +
 ```
 
 ```{r employment, echo=FALSE}
+# Employment plot
+df[, "emplnw"] <- as.factor(df[, "emplnw"])
 #summary(df$emplnw)
 #str(df$emplnw)
-df[, "emplnw"] <- as.factor(df[, "emplnw"])
 
 employment <- ggplot(data = df, aes(x=reorder(emplnw, -table(emplnw)[emplnw]))) + 
   geom_bar() + 
