@@ -68,3 +68,87 @@ employment <- ggplot(data = df, aes(x=reorder(emplnw, -table(emplnw)[emplnw]))) 
 ```{r describtive_stats_1, echo=FALSE}
 grid.arrange(employment, gender, r_race, age)
 ```
+
+
+```{r} 
+##### SAUL & UDIT's Part ----- Technology and Relationship
+
+# 1 Ex. Do people that met online [rel1, 1] perceive their quality of life higher [q1] or lower?
+
+onlineRel <- mean((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
+offlineRel<- mean((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+
+hist((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
+
+hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+
+
+
+# 2 Does technology assist in meeting a partner? 
+
+
+
+
+# 3 Is there a difference between people’s happiness with their partner for those who met their person online vs offline?
+
+
+
+# 4 For people who say that they are looking for a partner, look at the proportion of who are using online dating
+
+
+sum(((df[,"mar4"] == 1) *1), na.rm = TRUE) # total number of people looking for a relationship 
+
+
+
+sum((df[df[,"mar4"] == 1, "date6"] == 1)*1, na.rm = TRUE) #number of people that are looking for a relationship & using online dating 
+sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that are looking for a relationship &  are NOT using online dating 
+
+
+
+# 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
+
+sum((df$meet == 1), na.rm = TRUE) #easy to meet 
+sum((df$meet == 2), na.rm = TRUE) # difficult 
+
+
+
+sum((df[df[,"date6"] == 1 , "meet"] == 1) , na.rm =  TRUE) # number of people with an online dating page, that find it easy to meet people 
+
+sum((df[df[,"date6"] == 1 , "meet"] == 2) , na.rm =  TRUE) # number of people with an online dating page, that find it difficult  to meet people 
+
+
+sum((df[df[,"date6"] == 1 , "meet"]) , na.rm =  TRUE) # 59 people with dating pages answered the question about th edifficulty to meet people. 
+
+summary(df[,"date6"] == 1) 
+
+summary(df[,"meet"] == 1 )
+
+
+# 6 Does meeting a partner online fostering a bonding relationship with partner? For example, from the question about someone believes that internet / cellphone have a NEGATIVE / ZERO impact with relationship [REL6/ REL7] → see % of them that use cellphone to send / receive nude pictures [Q13] and not having any fight within 30 days [REL8] ☺ ☺
+
+
+
+# 7 Ex. How is the use of Social Media Networks and Twitter affect relationships?
+#Can we see the relationship between marital status [MAR] / gender [SEX] / confident [DATE7] / social activity [LOC3] with using online dating  [DATE1A / DATE2A]? For example to see married men / women use online dating as well ☺ ? The initial hypothesis is that: only single / divorced men / women that use online dating
+
+
+
+# 8 Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
+
+
+
+
+# 8 Would you say that technolgy is having a major impact on your relationship
+
+sum(((df[,"rel6"] == 1)* 1), na.rm = TRUE) #major
+sum(((df[,"rel6"] == 2)* 1), na.rm = TRUE) #minor
+sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
+
+
+
+```
+
+
+
+
+
