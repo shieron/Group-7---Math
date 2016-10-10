@@ -276,16 +276,26 @@ sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
 Technology and Education & Employment
 ```{r}
 # use smartphone/Internet vs. edu level
-use.smartphone <- df[ , 'q12']
-use.internet <- df[ , 'intuse']
-edu <- df[ , 'educ2']
+use.smartphone <- as.factor(df[ , 'q12'])
+use.internet <- as.factor(df[ , 'intuse'])
+edu <- as.factor(df[ , 'educ2'])
 df.edu <- cbind(use.internet,use.smartphone)
 df.edu <- cbind(df.edu,edu)
 
 
 # edu vs. income 
-income <- df[ , 'inc']
+income <- as.factor(df[ , 'inc'])
 df.income <- cbind(df.edu,income)
+
+# remove all 98 and 98, which stand for don't know and don't want to tell
+df.income <- subset(df.income, df.income[ ,'edu'] != 98)
+df.income <- subset(df.income, df.income[ ,'edu'] != 99)
+df.income <- subset(df.income, df.income[ ,'income']!= 98)
+df.income <- subset(df.income, df.income[ ,'income']!= 99)
+
+income.edu <- df.income[ , c('edu','income')]
+
+ggplot(df.income.edu) + geom_point(aex(x=edu,y=income))
 ```
 
 >>>>>>> 13632aef6cb16813c8cc22d79e0d399e339973b4
