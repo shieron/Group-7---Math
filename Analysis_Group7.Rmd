@@ -261,10 +261,16 @@ sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that
 
 # 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
 
-sum((df$meet == 1), na.rm = TRUE) #easy to meet 
-sum((df$meet == 2), na.rm = TRUE) # difficult 
+nrow((df$meet == 1), na.rm = TRUE) #easy to meet 
+nrow((df$meet == 2), na.rm = TRUE) # difficult 
 
+h1 = table(df$meet,df$date6)
+h1vec = as.vector(g1[1:2,1:2])
+names(h1vec) = c("easy to meet / used OD","difficult to meet / used OD","easy to meet / did not use OD","difficult to meet / did not use OD")
+h1df = data.frame(h1vec)
+ggplot(h1df,aes(x = rownames(h1df),y = h1vec)) + geom_bar(stat="identity",fill='orange',color='black') + labs(x="Difficulty in meeting people vs Usage of Online Dating",y="Number of people")+geom_text(aes(label=h1vec), vjust=-0.2, color='black')
 
+# 68 people say that its easy to meet people while 66 people feel that it is difficult to meet people. However, only 18 out of the those 66 people actually have a profile on a online dating website.
 
 sum((df[df[,"date6"] == 1 , "meet"] == 1) , na.rm =  TRUE) # number of people with an online dating page, that find it easy to meet people 
 
