@@ -7,6 +7,8 @@ output: html_document
 #Loading libraries
 library(ggplot2)
 library(gridExtra)
+library(scales)
+library(plyr)
 
 #Loading Data
 df <- read.csv("May_2013_Online_Dating_CSV.csv")
@@ -73,8 +75,6 @@ r_race <- ggplot(data = df, aes(x=reorder(race, -table(race)[race]))) +
   labs(x = "", y = "Count", title = "Race") +
   coord_flip()
 ```
-
-
 
 
 ```{r employment, echo=FALSE}
@@ -162,7 +162,7 @@ df[, "q1"] <- as.factor(df[, "q1"])
 #str(df$q1)
 
 life_quality <- ggplot(data = df, aes(x = q1)) + 
-  geom_bar() + 
+  geom_bar(aes(y = aes(y = (..count..)/sum(..count..))) + 
   scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
   labs(x = "", y = "Count", title = "Quality of life") + coord_flip()
 ```
@@ -182,16 +182,92 @@ grid.arrange(employment, education, income, household_size)
 grid.arrange(marital_status, sexual_orientation, children, life_quality)
 ```
 
-#Happiness vs presence of children in the household
+#Quality of Life vs presence of children in the household
+
+### Looking at the graph below, it appears that households without children are less likely to say that their quality of life is Excellent. However, using the chi square test, we see that the p-value is high, indicating that there is not enough evidence to conclude that there are differences in quality of life among people with and without children <18 in the household. 
+
+##### Exludes 32 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on whether they have children under 18 in the household.
 
 ```{r life quality vs children, echo=FALSE}
 # Life quality vs children
 
-life_quality_vs_children <- ggplot(data = df, aes(x = q1)) + 
-  geom_bar() + 
-  scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
-  labs(x = "", y = "Count", title = "Quality of life vs Children in the household") + facet_wrap(~par)
+quality_vs_children <- df[df$par!="8" & df$par!="9" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_children_plot <- as.data.frame(with(quality_vs_children, table(par,q1)))
+
+quality_vs_children_plot <- ddply(quality_vs_children_plot, .(par), transform, p = Freq/sum(Freq))
+
+quality_vs_children_plot[,"q1"] <- revalue(quality_vs_children_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+quality_vs_children_plot[,"par"] <- revalue(quality_vs_children_plot[,"par"], c("1" = "Children <18 = Yes", "2" = "Children <18 = No"))
+
+ggplot(quality_vs_children_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~par) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Presence of Children under 18 in the Household")
+
+chisq.test(quality_vs_children[,"par"], quality_vs_children[,"q1"])
 ```
+
+#Quality of Life vs Use of Cell Phones
+
+### Looking at the graph below, it appears that respondents that use cellphones are more likely to say that their quality of life is Excellent. Using the chi square test, we see that the p-value is low, indicating that there is evidence to conclude that there are differences in the quality of life levels among people that use internet on the phone and those that don't. 
+
+##### Exludes 22 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on whether they use internet on their cellphone.
+
+```{r life quality vs internet on cell phones, echo=FALSE}
+# Life quality vs use of internet on cellphone
+# summary(df[,"intmob"])
+df[,"intmob"] <- as.factor(df[,"intmob"])
+
+quality_vs_phoneNet <- df[df$intmob!="8" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_phoneNet_plot <- as.data.frame(with(quality_vs_phoneNet, table(intmob,q1)))
+
+quality_vs_phoneNet_plot <- ddply(quality_vs_phoneNet_plot, .(intmob), transform, p = Freq/sum(Freq))
+
+quality_vs_phoneNet_plot[,"q1"] <- revalue(quality_vs_phoneNet_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+quality_vs_phoneNet_plot[,"intmob"] <- revalue(quality_vs_phoneNet_plot[,"intmob"], c("1"="Internet on Cellphone = Yes", "2" = "Internet on Cellphone = No"))
+  
+ggplot(quality_vs_phoneNet_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~intmob) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Use of Internet on Cellphone")
+
+chisq.test(quality_vs_phoneNet[,"intmob"], quality_vs_phoneNet[,"q1"])
+```
+
+#Quality of Life vs Use of Social Networks (Facebook, Twitter, LinkedIn, etc)
+
+### Looking at the graph below, the users and non-users of social networks appear to report their quality of life levels similarly. Using the chi square test, we see that the p-value is high, indicating that there is no evidence to conclude that there are differences in the quality of life levels between users and non-users of social networks. 
+
+##### Exludes 371 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on the use of social networks. Respondents who do not use internet were also exlcluded.
+
+```{r life quality vs social networks, echo=FALSE}
+# Life quality vs social networks
+# summary(df[,"act87"])
+df[,"act87"] <- as.factor(df[,"act87"])
+
+# summary(df[,"act112"])
+df[,"act112"] <- as.factor(df[,"act112"])
+
+quality_vs_socNetworks <- df[df$act87!="9" & !is.na(df$act87) & df$act112!="9" & !is.na(df$act112) & df$act112!="8" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_socNetworks <- subset(quality_vs_socNetworks, select = c(act87, act112, q1))
+
+for (i in 1:nrow(quality_vs_socNetworks)){
+  if (quality_vs_socNetworks[i,"act87"]=="1" |  quality_vs_socNetworks[i,"act112"]=="1"){
+    quality_vs_socNetworks[i,"SN_user"] <- "Social Network User = Yes"
+  }
+  else{
+    quality_vs_socNetworks[i,"SN_user"] <- "Social Network User = No"
+  }
+}
+
+quality_vs_socNetworks_plot <- as.data.frame(with(quality_vs_socNetworks, table(SN_user,q1)))
+
+quality_vs_socNetworks_plot <- ddply(quality_vs_socNetworks_plot, .(SN_user), transform, p = Freq/sum(Freq))
+
+quality_vs_socNetworks_plot[,"q1"] <- revalue(quality_vs_socNetworks_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+ggplot(quality_vs_socNetworks_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~SN_user) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Use of Social Networks")
+
+chisq.test(quality_vs_socNetworks[,"SN_user"], quality_vs_socNetworks[,"q1"])
 
 
 ```{r} 
