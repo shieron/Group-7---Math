@@ -206,6 +206,12 @@ hist((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
 
 hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
 
+# happiness of people that met online 
+df[df[,"rel1"] == 1 , "q1"] 
+mean((df[df[,"rel1"] == 1 , "q1"]),na.rm = TRUE)
+# happiness of people that met offline 
+df[df[,"rel1"] == 2 , "q1"] 
+mean((df[df[,"rel1"] == 2 , "q1"]),na.rm = TRUE)
 
 
 # 2 Does technology assist in meeting a partner? 
@@ -239,14 +245,6 @@ grid.arrange(p1,p2,p3,p4,nrow=2)
 
 
 
-# 3 Is there a difference between people’s happiness with their partner for those who met their person online vs offline?
-
-# happiness of people that met online 
-df[df[,"rel1"] == 1 , "q1"] 
-mean((df[df[,"rel1"] == 1 , "q1"]),na.rm = TRUE)
-# happiness of people that met offline 
-df[df[,"rel1"] == 2 , "q1"] 
-mean((df[df[,"rel1"] == 2 , "q1"]),na.rm = TRUE)
 
 
 # 4 For people who say that they are looking for a partner, look at the proportion of who are using online dating
