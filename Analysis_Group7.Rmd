@@ -38,6 +38,18 @@ sexual_orientation <- ggplot(data = df, aes(x = lgbt)) +
   
 ```
 
+```{r Hispanic, echo=FALSE}
+# Hispanic
+df[, "hisp"] <- as.factor(df[, "hisp"])
+#summary(df$hisp)
+#str(df$hisp)
+
+hispanic <- ggplot(data = df, aes(x = hisp)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Are you of Hispanic or Latino background?")
+```
+
 ```{r age, echo=FALSE}
 #Age plot
 #summary(df$age)
@@ -49,7 +61,6 @@ age <- ggplot(data = df, aes(x = age)) +
   labs(x = "Age", y = "Frequency", title = "Age")
 
 ```
-
 ```{r race, echo=FALSE}
 # Race plot
 df[, "race"] <- as.factor(df[, "race"])
@@ -64,10 +75,6 @@ r_race <- ggplot(data = df, aes(x=reorder(race, -table(race)[race]))) +
 ```
 
 
-# Who were the respondents (part 1)
-```{r describtive_stats_1, echo=FALSE}
-grid.arrange(gender, r_race, age, hispanic)
-```
 
 
 ```{r employment, echo=FALSE}
@@ -121,11 +128,6 @@ household_size <- ggplot(data = df, aes(x = hh1)) +
   labs(x = "", y = "Count", title = "Household Size")
 ```
 
-# Who were the respondents (part 2)
-```{r describtive_stats_2, echo=FALSE}
-grid.arrange(employment, education, income, household_size)
-```
-
 
 ```{r marrital status, echo=FALSE}
 # Marital status
@@ -152,18 +154,6 @@ children <- ggplot(data = df, aes(x = par)) +
   labs(x = "", y = "Count", title = "Children <18 living in household")
 ```
 
-```{r Hispanic, echo=FALSE}
-# Hispanic
-df[, "hisp"] <- as.factor(df[, "hisp"])
-#summary(df$hisp)
-#str(df$hisp)
-
-hispanic <- ggplot(data = df, aes(x = hisp)) + 
-  geom_bar() + 
-  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
-  labs(x = "", y = "Count", title = "Are you of Hispanic or Latino background?")
-```
-
 
 ```{r life quality, echo=FALSE}
 # Life quality
@@ -175,6 +165,15 @@ life_quality <- ggplot(data = df, aes(x = q1)) +
   geom_bar() + 
   scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
   labs(x = "", y = "Count", title = "Quality of life") + coord_flip()
+```
+# Who were the respondents (part 1)
+```{r describtive_stats_1, echo=FALSE}
+grid.arrange(gender, r_race, age, hispanic)
+```
+
+# Who were the respondents (part 2)
+```{r describtive_stats_2, echo=FALSE}
+grid.arrange(employment, education, income, household_size)
 ```
 
 #Who were the respondents (part 3)
