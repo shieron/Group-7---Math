@@ -33,7 +33,7 @@ df[, "lgbt"] <- as.factor(df[, "lgbt"])
 
 sexual_orientation <- ggplot(data = df, aes(x = lgbt)) + 
   geom_bar() + 
-  scale_x_discrete(labels = c("Heterosexual", "Gay/lesbian", "Bisexual", "Other", "Don't know", "Refused")) + coord_flip() +
+  scale_x_discrete(labels = c("1" = "Heterosexual", "2" = "Gay/lesbian", "3" = "Bisexual", "4" = "Other", "8" = "Don't know", "9" = "Refused")) + coord_flip() +
   labs(x = "", y = "Count", title = "Sexual Orientation")
   
 ```
@@ -58,15 +58,15 @@ df[, "race"] <- as.factor(df[, "race"])
 
 r_race <- ggplot(data = df, aes(x=reorder(race, -table(race)[race]))) + 
   geom_bar() + 
-  scale_x_discrete(labels=c('White','Black','Asian','Mixed','Native American','Other',"Don't Know",'Refused')) +
+  scale_x_discrete(labels=c("1" = 'White',"2" = 'Black',"3" = 'Asian',"4" = 'Mixed',"5" = 'Native American',"6" = 'Other',"8" = "Don't Know","9" = 'Refused')) +
   labs(x = "", y = "Count", title = "Race") +
   coord_flip()
 ```
 
 
-#Who were the respondents (part 1)
+# Who were the respondents (part 1)
 ```{r describtive_stats_1, echo=FALSE}
-grid.arrange(gender, r_race, age, sexual_orientation)
+grid.arrange(gender, r_race, age, hispanic)
 ```
 
 
@@ -78,7 +78,7 @@ df[, "emplnw"] <- as.factor(df[, "emplnw"])
 
 employment <- ggplot(data = df, aes(x=reorder(emplnw, -table(emplnw)[emplnw]))) + 
   geom_bar() + 
-  scale_x_discrete(labels=c('Full-time','Part-time','Retired','Not employed','Self-employed','Disabled',"Student",'Other', "Refused")) +
+  scale_x_discrete(labels=c("1" = 'Full-time',"2" = 'Part-time',"3" = 'Retired',"4" = 'Not employed',"5" = 'Self-employed',"6" = 'Disabled',"7" = "Student", "8" = 'Other', "9" = "Refused")) +
   labs(x = "", y = "Count", title = "Employment Level") + coord_flip()
 ```
 
@@ -91,7 +91,7 @@ df[, "inc"] <- as.factor(df[, "inc"])
 
 income <- ggplot(data = df, aes(x = inc)) + 
   geom_bar() + coord_flip() +
-  scale_x_discrete(labels = c("1"="under 10k", "2"="10-20k", "3"="20-30k", "4"="30-40k", "5"="40-50k", "6"="50-75k", "7"="75-100k", "8"="100-150k", "9"="over 150k", "98"="Don't Know", "99"="Refused")) +
+  scale_x_discrete(labels = c("1" = "under 10k", "2" = "10-20k", "3" = "20-30k", "4" = "30-40k", "5" = "40-50k", "6" = "50-75k", "7" = "75-100k", "8" = "100-150k", "9" = "over 150k", "98" = "Don't Know", "99" = "Refused")) +
   labs(x = "", y = "Count", title = "Income in thousands USD")
   
 ```
@@ -104,11 +104,11 @@ df[, "educ2"] <- as.factor(df[, "educ2"])
 
 education <- ggplot(data = df, aes(x = educ2)) + 
   geom_bar() + 
-  scale_x_discrete(labels = c("Grade 1-8", "Incomplete high school", "Complete high school", "Some college", "Associate degree", "Bachelor's", "Some postgrad", "Master's/phd/professional", "Don't know", "Refused")) +
+  scale_x_discrete(labels = c("1" = "Grade 1-8", "2" = "Incomplete high school", "3" = "Complete high school", "4" = "Some college", "5" = "Associate degree", "6" = "Bachelor's", "7" = "Some postgrad", "8" = "Master's/phd/professional", "98" = "Don't know", "99" = "Refused")) +
   labs(x = "", y = "Count", title = "Education") + coord_flip()
 ```
 
-
+<<<<<<< HEAD
 ```{r household size, echo=FALSE}
 # Household size plot
 df[, "hh1"] <- as.factor(df[, "hh1"])
@@ -117,10 +117,161 @@ df[, "hh1"] <- as.factor(df[, "hh1"])
 
 household_size <- ggplot(data = df, aes(x = hh1)) + 
   geom_bar() + 
-  scale_x_discrete(labels = c("1", "2", "3", "4", "5", "6+", "Don't know", "Refused")) +
+  scale_x_discrete(labels = c("1" = "1", "2" = "2", "3" = "3", "4" = "4", "5" = "5", "6" = "6+", "8" = "Don't know", "9" = "Refused")) +
   labs(x = "", y = "Count", title = "Household Size")
 ```
 
-#Who were the respondents (part 2)
+# Who were the respondents (part 2)
 ```{r describtive_stats_2, echo=FALSE}
 grid.arrange(employment, education, income, household_size)
+```
+
+
+```{r marrital status, echo=FALSE}
+# Marital status
+df[, "mar"] <- as.factor(df[, "mar"])
+#summary(df$mar)
+#str(df$mar)
+
+marital_status <- ggplot(data = df, aes(x = mar)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Married", "2"="Living with Partner", "3"="Divorced", "4"= "Separated", "5" = "Widowed", "6" = "Never been married", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Marital status") + coord_flip()
+```
+
+
+```{r children, echo=FALSE}
+# Children
+df[, "par"] <- as.factor(df[, "par"])
+#summary(df$par)
+#str(df$par)
+
+children <- ggplot(data = df, aes(x = par)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Children <18 living in household")
+```
+
+```{r Hispanic, echo=FALSE}
+# Hispanic
+df[, "hisp"] <- as.factor(df[, "hisp"])
+#summary(df$hisp)
+#str(df$hisp)
+
+hispanic <- ggplot(data = df, aes(x = hisp)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Are you of Hispanic or Latino background?")
+```
+
+
+```{r life quality, echo=FALSE}
+# Life quality
+df[, "q1"] <- as.factor(df[, "q1"])
+#summary(df$q1)
+#str(df$q1)
+
+life_quality <- ggplot(data = df, aes(x = q1)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Quality of life") + coord_flip()
+```
+
+#Who were the respondents (part 3)
+
+```{r describtive_stats_3, echo=FALSE}
+grid.arrange(marital_status, sexual_orientation, children, life_quality)
+```
+
+#Happiness vs presence of children in the household
+
+```{r life quality vs children, echo=FALSE}
+# Life quality vs children
+
+life_quality_vs_children <- ggplot(data = df, aes(x = q1)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Quality of life vs Children in the household") + facet_wrap(~par)
+```
+
+
+```{r} 
+##### SAUL & UDIT's Part ----- Technology and Relationship
+
+# 1 Ex. Do people that met online [rel1, 1] perceive their quality of life higher [q1] or lower?
+
+onlineRel <- mean((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
+offlineRel<- mean((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+
+hist((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
+
+hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+
+
+
+# 2 Does technology assist in meeting a partner? 
+
+
+
+
+# 3 Is there a difference between people’s happiness with their partner for those who met their person online vs offline?
+
+
+
+# 4 For people who say that they are looking for a partner, look at the proportion of who are using online dating
+
+
+sum(((df[,"mar4"] == 1) *1), na.rm = TRUE) # total number of people looking for a relationship 
+
+
+
+sum((df[df[,"mar4"] == 1, "date6"] == 1)*1, na.rm = TRUE) #number of people that are looking for a relationship & using online dating 
+sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that are looking for a relationship &  are NOT using online dating 
+
+
+
+# 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
+
+sum((df$meet == 1), na.rm = TRUE) #easy to meet 
+sum((df$meet == 2), na.rm = TRUE) # difficult 
+
+
+
+sum((df[df[,"date6"] == 1 , "meet"] == 1) , na.rm =  TRUE) # number of people with an online dating page, that find it easy to meet people 
+
+sum((df[df[,"date6"] == 1 , "meet"] == 2) , na.rm =  TRUE) # number of people with an online dating page, that find it difficult  to meet people 
+
+
+sum((df[df[,"date6"] == 1 , "meet"]) , na.rm =  TRUE) # 59 people with dating pages answered the question about th edifficulty to meet people. 
+
+summary(df[,"date6"] == 1) 
+
+summary(df[,"meet"] == 1 )
+
+
+# 6 Does meeting a partner online fostering a bonding relationship with partner? For example, from the question about someone believes that internet / cellphone have a NEGATIVE / ZERO impact with relationship [REL6/ REL7] → see % of them that use cellphone to send / receive nude pictures [Q13] and not having any fight within 30 days [REL8] ☺ ☺
+
+
+
+# 7 Ex. How is the use of Social Media Networks and Twitter affect relationships?
+#Can we see the relationship between marital status [MAR] / gender [SEX] / confident [DATE7] / social activity [LOC3] with using online dating  [DATE1A / DATE2A]? For example to see married men / women use online dating as well ☺ ? The initial hypothesis is that: only single / divorced men / women that use online dating
+
+
+
+# 8 Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
+
+
+
+
+# 8 Would you say that technolgy is having a major impact on your relationship
+
+sum(((df[,"rel6"] == 1)* 1), na.rm = TRUE) #major
+sum(((df[,"rel6"] == 2)* 1), na.rm = TRUE) #minor
+sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
+
+
+
+```
+
+
+>>>>>>> 13632aef6cb16813c8cc22d79e0d399e339973b4
