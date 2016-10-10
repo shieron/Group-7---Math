@@ -273,4 +273,19 @@ sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
 ```
 
 
+Technology and Education & Employment
+```{r}
+# use smartphone/Internet vs. edu level
+use.smartphone <- df[ , 'q12']
+use.internet <- df[ , 'intuse']
+edu <- df[ , 'educ2']
+df.edu <- cbind(use.internet,use.smartphone)
+df.edu <- cbind(df.edu,edu)
+
+
+# edu vs. income 
+income <- df[ , 'inc']
+df.income <- cbind(df.edu,income)
+```
+
 >>>>>>> 13632aef6cb16813c8cc22d79e0d399e339973b4
