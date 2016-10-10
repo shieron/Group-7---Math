@@ -386,7 +386,24 @@ summary(df[,"meet"] == 1 )
 # 8 Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
 
 
-summary(lm(rel8a ~ rel5, data = df))
+# We can use logistic regression to find the impact of having a common email account, a shared social networking profile, a shared online calendar, and shared online passwords on relationships. 
+
+# Currently 115 people say that internet and email has had a major impact on their relationship, while 213 people say that it has had a negative impact. So, for our baseline model, we will assume that internet always has a negative impact, and out baseline accuracy will be 115/115+213  = 35%. Can we come up with a logistic regression model which improves this accuracy number.
+
+library(caTools)
+df1 = subset(df, rel6 == 1 | rel6 == 2)
+df1$rel6 = ifelse(df1$rel6==1,0,1) #convert rel6 into a binomial variable
+set.seed(1000)
+split = sample.split(df1$rel6,SplitRatio=0.7) # divide the data into training and test sets, with 70% data in the training set
+train = subset(df1,split==TRUE) #Training set
+test = subset(df1, split==FALSE)# Test set
+model1 = glm(rel6~rel4a+rel4b+rel4c + rel5,data=train,family=binomial)# Logistic Regression model
+summary(model1)
+predictTest = predict(model1,newdata=test)# making predictions on the test set using our model 
+table(test$rel6,predictTest > 0.5)#checking the prediction accuracy using a threshold of 0.5
+
+
+
 
 # 9 Would you say that technolgy is having a major impact on your relationship rel6, and if so what kind of impact rel7
 
