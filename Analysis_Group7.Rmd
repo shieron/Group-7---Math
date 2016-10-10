@@ -279,7 +279,7 @@ Technology and Education & Employment
 use.smartphone <- as.factor(df[ , 'q12'])
 use.internet <- as.factor(df[ , 'intuse'])
 edu <- as.factor(df[ , 'educ2'])
-df.edu <- cbind(use.internet,use.smartphone)
+df.edu <- as.data.frame(cbind(use.internet,use.smartphone))
 df.edu <- cbind(df.edu,edu)
 
 
@@ -295,7 +295,11 @@ df.income <- subset(df.income, df.income[ ,'income']!= 99)
 
 income.edu <- df.income[ , c('edu','income')]
 
-ggplot(df.income.edu) + geom_point(aex(x=edu,y=income))
+ggplot(income.edu, aes(edu, ..count..)) + geom_bar(aes(fill = income), position = "dodge")
+
+#logistic regression on income and edu level 
+glm(income ~ edu,data=income.edu, family = binomial)
+
 ```
 
 >>>>>>> 13632aef6cb16813c8cc22d79e0d399e339973b4
