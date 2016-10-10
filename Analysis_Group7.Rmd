@@ -241,6 +241,12 @@ grid.arrange(p1,p2,p3,p4,nrow=2)
 
 # 3 Is there a difference between people’s happiness with their partner for those who met their person online vs offline?
 
+# happiness of people that met online 
+df[df[,"rel1"] == 1 , "q1"] 
+mean((df[df[,"rel1"] == 1 , "q1"]),na.rm = TRUE)
+# happiness of people that met offline 
+df[df[,"rel1"] == 2 , "q1"] 
+mean((df[df[,"rel1"] == 2 , "q1"]),na.rm = TRUE)
 
 
 # 4 For people who say that they are looking for a partner, look at the proportion of who are using online dating
@@ -286,7 +292,7 @@ summary(df[,"meet"] == 1 )
 # 8 Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
 
 
-
+summary(lm(rel8a ~ rel5, data = df))
 
 # 8 Would you say that technolgy is having a major impact on your relationship
 
