@@ -210,6 +210,32 @@ hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
 
 # 2 Does technology assist in meeting a partner? 
 
+c1 = table(df$celldatea,df$celldateb)
+c1vec = as.vector(c1[1:2,1:2])
+names(c1vec) = c("calling / texting", "calling","texting","neither")
+c1df = data.frame(c1vec)
+p1 = ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightblue',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=c1vec), vjust=-0.2, color='darkblue')
+
+d1 = table(df$intdatec,df$intdated)
+d1vec = as.vector(d1[1:2,1:2])
+names(d1vec) = c("search / ask out", "ask out","search","neither")
+d1df = data.frame(d1vec)
+p2 = ggplot(d1df,aes(x = rownames(d1df),y = d1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=d1vec), vjust=-0.2, color='darkgreen')
+
+e1 = table(df$snsdate1c,df$snsdate1e)
+e1vec = as.vector(e1[1:2,1:2])
+names(e1vec) = c("ask out / follow/friend","ask out","follow/friend","neither")
+e1df=data.frame(e1vec)
+p3 = ggplot(e1df,aes(x = rownames(e1df),y = e1vec)) + geom_bar(stat="identity",fill='lightyellow',color='black') + labs(x="Using Social Media to meet people",y="Number of people")+geom_text(aes(label=e1vec), vjust=-0.2, color='black')
+
+
+g1 = table(df$date5a,df$date5b)
+g1vec = as.vector(g1[1:2,1:2])
+names(g1vec) = c("used OD / got married","used OD","got married","neither")
+g1df = data.frame(g1vec)
+p4 = ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightpink',color='black') + labs(x="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), vjust=-0.2, color='black')
+ 
+grid.arrange(p1,p2,p3,p4,nrow=2)
 
 
 
