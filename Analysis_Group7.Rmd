@@ -1,6 +1,6 @@
 ---
 title: "Technology, Quality of Life, and Relationships"
-output: html_document
+output: pdf_document
 ---
 
 ```{r loading libraries, echo=FALSE}
@@ -271,25 +271,70 @@ chisq.test(quality_vs_socNetworks[,"SN_user"], quality_vs_socNetworks[,"q1"])
 
 
 ```{r} 
-##### SAUL & UDIT's Part ----- Technology and Relationship
+#SAUL & UDIT's Part ----- Technology and Relationship
 
 # 1 Ex. Do people that met online [rel1, 1] perceive their quality of life higher [q1] or lower?
 
-onlineRel <- mean((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
-offlineRel<- mean((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+# absolute values of quality of life and dating 
+ggplot(data =df) + geom_bar(aes(x = q1 , colour = q1)) + facet_grid(~rel1)
 
-hist((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
+indhap <- which(df$q1 < 6) 
+indmet <- which(df$rel1 == 1 |df$rel1 == 2)
 
-hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+finind <- intersect(indhap,indmet)
+
+hap <- df[finind, "q1"]
+met <- df[finind, "rel1"]
+
+ex<- table(hap,met)
+ex
+ex1df <- data.frame(ex)
+levels(ex1df$met) <- c("Met online", "Met offline")
+
+#absoloute numbers for happiness and how people met
+ggplot(data = ex1df , aes(x = hap, y = Freq)) + geom_bar(stat = "identity") + facet_grid(~ met) + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and Origin of Relationship")
+
+
+indOffline <- which(df$rel1 == 1)
+finind2 <- intersect(indhap,indOffline)
+
+hap2 <- df[finind2, "q1"]
+met2 <- df[finind2, "rel1"]
+ex2<- table(hap2,met2)
+ex1df2 <- data.frame(ex2)
+
+ggplot(data = ex1df2 , aes(x = hap2, y = Freq)) + geom_bar(stat = "identity")  + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and of Relationships Begun Online") 
 
 
 
 # 2 Does technology assist in meeting a partner? 
 
+c1 = table(df$celldatea,df$celldateb)
+c1vec = as.vector(c1[1:2,1:2])
+names(c1vec) = c("calling / texting", "calling","texting","neither")
+c1df = data.frame(c1vec)
+p1 = ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightblue',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=c1vec), vjust=-0.2, color='darkblue')
+
+d1 = table(df$intdatec,df$intdated)
+d1vec = as.vector(d1[1:2,1:2])
+names(d1vec) = c("search / ask out", "ask out","search","neither")
+d1df = data.frame(d1vec)
+p2 = ggplot(d1df,aes(x = rownames(d1df),y = d1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=d1vec), vjust=-0.2, color='darkgreen')
+
+e1 = table(df$snsdate1c,df$snsdate1e)
+e1vec = as.vector(e1[1:2,1:2])
+names(e1vec) = c("ask out / follow/friend","ask out","follow/friend","neither")
+e1df=data.frame(e1vec)
+p3 = ggplot(e1df,aes(x = rownames(e1df),y = e1vec)) + geom_bar(stat="identity",fill='lightyellow',color='black') + labs(x="Using Social Media to meet people",y="Number of people")+geom_text(aes(label=e1vec), vjust=-0.2, color='black')
 
 
-
-# 3 Is there a difference between people’s happiness with their partner for those who met their person online vs offline?
+g1 = table(df$date5a,df$date5b)
+g1vec = as.vector(g1[1:2,1:2])
+names(g1vec) = c("used OD / got married","used OD","got married","neither")
+g1df = data.frame(g1vec)
+p4 = ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightpink',color='black') + labs(x="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), vjust=-0.2, color='black')
+ 
+grid.arrange(p1,p2,p3,p4,nrow=2)
 
 
 
@@ -299,7 +344,6 @@ hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
 sum(((df[,"mar4"] == 1) *1), na.rm = TRUE) # total number of people looking for a relationship 
 
 
-
 sum((df[df[,"mar4"] == 1, "date6"] == 1)*1, na.rm = TRUE) #number of people that are looking for a relationship & using online dating 
 sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that are looking for a relationship &  are NOT using online dating 
 
@@ -307,11 +351,20 @@ sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that
 
 # 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
 
-sum((df$meet == 1), na.rm = TRUE) #easy to meet 
-sum((df$meet == 2), na.rm = TRUE) # difficult 
+nrow((df$meet == 1), na.rm = TRUE) #easy to meet 
+nrow((df$meet == 2), na.rm = TRUE) # difficult 
 
+<<<<<<< HEAD
+=======
+h1 = table(df$meet,df$date6)
+h1vec = as.vector(g1[1:2,1:2])
+names(h1vec) = c("easy to meet / used OD","difficult to meet / used OD","easy to meet / did not use OD","difficult to meet / did not use OD")
+h1df = data.frame(h1vec)
+ggplot(h1df,aes(x = rownames(h1df),y = h1vec)) + geom_bar(stat="identity",fill='orange',color='black') + labs(x="Difficulty in meeting people vs Usage of Online Dating",y="Number of people")+geom_text(aes(label=h1vec), vjust=-0.2, color='black')
 
+# 68 people say that its easy to meet people while 66 people feel that it is difficult to meet people. However, only 18 out of the those 66 people actually have a profile on a online dating website.
 
+>>>>>>> 0c67ae6f1125c9051ed6feac58befe3e822a6dcc
 sum((df[df[,"date6"] == 1 , "meet"] == 1) , na.rm =  TRUE) # number of people with an online dating page, that find it easy to meet people 
 
 sum((df[df[,"date6"] == 1 , "meet"] == 2) , na.rm =  TRUE) # number of people with an online dating page, that find it difficult  to meet people 
@@ -324,9 +377,6 @@ summary(df[,"date6"] == 1)
 summary(df[,"meet"] == 1 )
 
 
-# 6 Does meeting a partner online fostering a bonding relationship with partner? For example, from the question about someone believes that internet / cellphone have a NEGATIVE / ZERO impact with relationship [REL6/ REL7] → see % of them that use cellphone to send / receive nude pictures [Q13] and not having any fight within 30 days [REL8] ☺ ☺
-
-
 
 # 7 Ex. How is the use of Social Media Networks and Twitter affect relationships?
 #Can we see the relationship between marital status [MAR] / gender [SEX] / confident [DATE7] / social activity [LOC3] with using online dating  [DATE1A / DATE2A]? For example to see married men / women use online dating as well ☺ ? The initial hypothesis is that: only single / divorced men / women that use online dating
@@ -336,15 +386,27 @@ summary(df[,"meet"] == 1 )
 # 8 Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
 
 
+summary(lm(rel8a ~ rel5, data = df))
 
+# 9 Would you say that technolgy is having a major impact on your relationship rel6, and if so what kind of impact rel7
 
-# 8 Would you say that technolgy is having a major impact on your relationship
+ggplot(data = df) + geom_bar(aes(x=rel6))
 
-sum(((df[,"rel6"] == 1)* 1), na.rm = TRUE) #major
-sum(((df[,"rel6"] == 2)* 1), na.rm = TRUE) #minor
-sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
+impactIndex <- which(df$rel6 == 1 | df$rel6 == 2)
+posNegIndex <- which(df$rel7 == 1 | df$rel7 == 2)        
 
+comIndex <- intersect(impactIndex,posNegIndex)
 
+impact <- df[comIndex,"rel6"]
+posNeg <- df[comIndex,"rel7"]
+
+impactPN <- table(impact,posNeg)
+
+impactVec <- as.vector(impactPN)
+names(impactVec) <- c("Major Positive Impact", "Minor Positive Impact", "Major Negative Impact", "Minor Negative Impact") 
+dfImpactPN <- as.data.frame(impactVec)
+
+ggplot(dfImpactPN,aes(x = rownames(dfImpactPN),y = impactVec)) + geom_bar(stat="identity",fill='grey') + labs(y="Frequency",x="Impact of Technology on Relationship")+geom_text(aes(label=impactVec), vjust=-0.2)
 
 ```
 
@@ -352,16 +414,30 @@ sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
 Technology and Education & Employment
 ```{r}
 # use smartphone/Internet vs. edu level
-use.smartphone <- df[ , 'q12']
-use.internet <- df[ , 'intuse']
-edu <- df[ , 'educ2']
-df.edu <- cbind(use.internet,use.smartphone)
+use.smartphone <- as.factor(df[ , 'q12'])
+use.internet <- as.factor(df[ , 'intuse'])
+edu <- as.factor(df[ , 'educ2'])
+df.edu <- as.data.frame(cbind(use.internet,use.smartphone))
 df.edu <- cbind(df.edu,edu)
 
 
 # edu vs. income 
-income <- df[ , 'inc']
+income <- as.factor(df[ , 'inc'])
 df.income <- cbind(df.edu,income)
+
+# remove all 98 and 98, which stand for don't know and don't want to tell
+df.income <- subset(df.income, df.income[ ,'edu'] != 98)
+df.income <- subset(df.income, df.income[ ,'edu'] != 99)
+df.income <- subset(df.income, df.income[ ,'income']!= 98)
+df.income <- subset(df.income, df.income[ ,'income']!= 99)
+
+income.edu <- df.income[ , c('edu','income')]
+
+ggplot(income.edu, aes(edu, ..count..)) + geom_bar(aes(fill = income), position = "dodge")
+
+#logistic regression on income and edu level 
+glm(income ~ edu,data=income.edu, family = binomial)
+
 ```
 
 >>>>>>> 13632aef6cb16813c8cc22d79e0d399e339973b4
