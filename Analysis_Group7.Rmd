@@ -1,6 +1,6 @@
 ---
 title: "Technology, Quality of Life, and Relationships"
-output: html_document
+output: pdf_document
 ---
 
 ```{r loading libraries, echo=FALSE}
@@ -195,23 +195,40 @@ life_quality_vs_children <- ggplot(data = df, aes(x = q1)) +
 
 
 ```{r} 
-##### SAUL & UDIT's Part ----- Technology and Relationship
+#SAUL & UDIT's Part ----- Technology and Relationship
 
 # 1 Ex. Do people that met online [rel1, 1] perceive their quality of life higher [q1] or lower?
 
-onlineRel <- mean((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
-offlineRel<- mean((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+# absolute values of quality of life and dating 
+ggplot(data =df) + geom_bar(aes(x = q1 , colour = q1)) + facet_grid(~rel1)
 
-hist((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
+indhap <- which(df$q1 < 6) 
+indmet <- which(df$rel1 == 1 |df$rel1 == 2)
 
-hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+finind <- intersect(indhap,indmet)
 
-# happiness of people that met online 
-df[df[,"rel1"] == 1 , "q1"] 
-mean((df[df[,"rel1"] == 1 , "q1"]),na.rm = TRUE)
-# happiness of people that met offline 
-df[df[,"rel1"] == 2 , "q1"] 
-mean((df[df[,"rel1"] == 2 , "q1"]),na.rm = TRUE)
+hap <- df[finind, "q1"]
+met <- df[finind, "rel1"]
+
+ex<- table(hap,met)
+ex
+ex1df <- data.frame(ex)
+levels(ex1df$met) <- c("Met online", "Met offline")
+
+#absoloute numbers for happiness and how people met
+ggplot(data = ex1df , aes(x = hap, y = Freq)) + geom_bar(stat = "identity") + facet_grid(~ met) + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and Origin of Relationship")
+
+
+indOffline <- which(df$rel1 == 1)
+finind2 <- intersect(indhap,indOffline)
+
+hap2 <- df[finind2, "q1"]
+met2 <- df[finind2, "rel1"]
+ex2<- table(hap2,met2)
+ex1df2 <- data.frame(ex2)
+
+ggplot(data = ex1df2 , aes(x = hap2, y = Freq)) + geom_bar(stat = "identity")  + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and of Relationships Begun Online") 
+
 
 
 # 2 Does technology assist in meeting a partner? 
@@ -245,13 +262,10 @@ grid.arrange(p1,p2,p3,p4,nrow=2)
 
 
 
-
-
 # 4 For people who say that they are looking for a partner, look at the proportion of who are using online dating
 
 
 sum(((df[,"mar4"] == 1) *1), na.rm = TRUE) # total number of people looking for a relationship 
-
 
 
 sum((df[df[,"mar4"] == 1, "date6"] == 1)*1, na.rm = TRUE) #number of people that are looking for a relationship & using online dating 
@@ -263,8 +277,6 @@ sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that
 
 sum((df$meet == 1), na.rm = TRUE) #easy to meet 
 sum((df$meet == 2), na.rm = TRUE) # difficult 
-
-
 
 sum((df[df[,"date6"] == 1 , "meet"] == 1) , na.rm =  TRUE) # number of people with an online dating page, that find it easy to meet people 
 
@@ -278,9 +290,6 @@ summary(df[,"date6"] == 1)
 summary(df[,"meet"] == 1 )
 
 
-# 6 Does meeting a partner online fostering a bonding relationship with partner? For example, from the question about someone believes that internet / cellphone have a NEGATIVE / ZERO impact with relationship [REL6/ REL7] → see % of them that use cellphone to send / receive nude pictures [Q13] and not having any fight within 30 days [REL8] ☺ ☺
-
-
 
 # 7 Ex. How is the use of Social Media Networks and Twitter affect relationships?
 #Can we see the relationship between marital status [MAR] / gender [SEX] / confident [DATE7] / social activity [LOC3] with using online dating  [DATE1A / DATE2A]? For example to see married men / women use online dating as well ☺ ? The initial hypothesis is that: only single / divorced men / women that use online dating
@@ -292,13 +301,25 @@ summary(df[,"meet"] == 1 )
 
 summary(lm(rel8a ~ rel5, data = df))
 
-# 8 Would you say that technolgy is having a major impact on your relationship
+# 9 Would you say that technolgy is having a major impact on your relationship rel6, and if so what kind of impact rel7
 
-sum(((df[,"rel6"] == 1)* 1), na.rm = TRUE) #major
-sum(((df[,"rel6"] == 2)* 1), na.rm = TRUE) #minor
-sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
+ggplot(data = df) + geom_bar(aes(x=rel6))
 
+impactIndex <- which(df$rel6 == 1 | df$rel6 == 2)
+posNegIndex <- which(df$rel7 == 1 | df$rel7 == 2)        
 
+comIndex <- intersect(impactIndex,posNegIndex)
+
+impact <- df[comIndex,"rel6"]
+posNeg <- df[comIndex,"rel7"]
+
+impactPN <- table(impact,posNeg)
+
+impactVec <- as.vector(impactPN)
+names(impactVec) <- c("Major Positive Impact", "Minor Positive Impact", "Major Negative Impact", "Minor Negative Impact") 
+dfImpactPN <- as.data.frame(impactVec)
+
+ggplot(dfImpactPN,aes(x = rownames(dfImpactPN),y = impactVec)) + geom_bar(stat="identity",fill='grey') + labs(y="Frequency",x="Impact of Technology on Relationship")+geom_text(aes(label=impactVec), vjust=-0.2)
 
 ```
 
