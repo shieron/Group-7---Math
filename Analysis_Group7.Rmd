@@ -274,4 +274,48 @@ sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
 ```
 
 
+```{r} 
+##### Shieron's Part ----- Technology and Income
+
+df <- read.csv("May_2013_Online_Dating_CSV.csv")
+
+####################################################################################################
+# 1 Does the person's income determine smartphone being used?
+
+# Group discrete variables for smartphone (smart2) and income (inc)
+df[,"smart2"] <- as.numeric(df[,"smart2"])
+df [!is.na(df$smart2) & df$smart2 > 5,]$smart2 <- 9
+df [!is.na(df$inc) & df$inc < 4,]$inc <- 1
+df [!is.na(df$inc) & df$inc > 3 & df$inc < 7,]$inc <- 2
+df [!is.na(df$inc) & df$inc > 6 & df$inc < 9,]$inc <- 3
+df [!is.na(df$inc) & df$inc > 10,]$inc <- 99
+df[,"smart2"] <- as.character(df[,"smart2"])
+df[,"inc"] <- as.character(df[,"inc"])
+
+ggplot(data = subset(df, !is.na(df$smart2)),aes (x = inc, fill = smart2, order = -as.numeric(smart2))) + geom_bar () + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + scale_fill_discrete(name = "Smartphone", breaks = c ("1", "2", "3", "4", "9"), labels = c("iPhone", "Blackberry", "Android", "Windows", "Others")) + labs(x = "Income (in US$)", y = "Count", title = "Smartphone and Income") 
+
+####################################################################################################
+# 2 Does a person who generates higher income and has smartphone tend to access email and browse internet? In other words, do accessing email and browsing internet depend with smartphone and income?
+
+df[(!is.na(df$q11a) & df$q11a == 1) |(!is.na(df$q11c) & df$q11c == 1) , "email_internet"] <- 1
+df[(!is.na(df$q11a) & df$q11a == 2) |(!is.na(df$q11c) & df$q11c == 2) , "email_internet"] <- 0
+
+model_out1 <- glm (email_internet ~ smart2 + inc, data = df, family = "binomial")
+coef (summary(model_out1))
+
+ggplot(data = df[(df[,"inc"] != "99"),], aes(x = inc , y = smart2)) + geom_tile(aes(fill=email_internet)) + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + scale_y_discrete(breaks = c ("1", "2", "3", "4", "9"), labels = c("iPhone", "Blackberry", "Android", "Windows", "Others")) + scale_fill_continuous(limits=c(0, 1), breaks=rev(seq(0,1,by=1)), name = "Access Email / Internet", labels = c ("Yes, I use my phone", "No, I don't")) + labs(x = "Income (in US$)", y = "Smartphone", title = "Income, Smartphone, and Email / Internet Access") 
+
+####################################################################################################
+# 3 Does a person who generates high income use internet at their home? It can show how they are dependent/not with the internet
+# If they use internet, what connection they use (do people still use dial up)
+
+model_out2 <- glm (home3nw ~ inc, data = df, family = "binomial")
+coef (summary(model_out2))
+       
+ggplot(data = transform(df, home3nw = c("Yes, I use internet", "No, I don't", "I don't know", "N/A")[as.numeric(home3nw)]), aes(x = inc, fill = inc)) + geom_bar() + facet_grid (home3nw ~ .) + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + labs(x = "Income (in US$)", y = "Count", title = "Income and Using Internet at Home") + theme(legend.position="none")
+
+ggplot(data = transform(df[df[,"home3nw"] == 1 & df[,"modem4b"] < 8,], modem4b = c("Dial-up", "DSL-enabled phone line", "Cable modem", "Wireless", "Fiber optic")[as.numeric(modem4b)]), aes(x = inc, fill = inc)) + geom_bar() + facet_grid (modem4b ~ .) + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + labs(x = "Income (in US$)", y = "Count", title = "Income and Using Internet at Home") + theme(legend.position="none", strip.text.x = element_text(size = 4, colour = "black", angle = 90))
+
+```
+
 >>>>>>> 13632aef6cb16813c8cc22d79e0d399e339973b4
