@@ -1,12 +1,14 @@
 ---
 title: "Technology, Quality of Life, and Relationships"
-output: html_document
+output: pdf_document
 ---
 
 ```{r loading libraries, echo=FALSE}
 #Loading libraries
 library(ggplot2)
 library(gridExtra)
+library(scales)
+library(plyr)
 
 #Loading Data
 df <- read.csv("May_2013_Online_Dating_CSV.csv")
@@ -38,6 +40,18 @@ sexual_orientation <- ggplot(data = df, aes(x = lgbt)) +
   
 ```
 
+```{r Hispanic, echo=FALSE}
+# Hispanic
+df[, "hisp"] <- as.factor(df[, "hisp"])
+#summary(df$hisp)
+#str(df$hisp)
+
+hispanic <- ggplot(data = df, aes(x = hisp)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Are you of Hispanic or Latino background?")
+```
+
 ```{r age, echo=FALSE}
 #Age plot
 #summary(df$age)
@@ -49,7 +63,6 @@ age <- ggplot(data = df, aes(x = age)) +
   labs(x = "Age", y = "Frequency", title = "Age")
 
 ```
-
 ```{r race, echo=FALSE}
 # Race plot
 df[, "race"] <- as.factor(df[, "race"])
@@ -61,12 +74,6 @@ r_race <- ggplot(data = df, aes(x=reorder(race, -table(race)[race]))) +
   scale_x_discrete(labels=c("1" = 'White',"2" = 'Black',"3" = 'Asian',"4" = 'Mixed',"5" = 'Native American',"6" = 'Other',"8" = "Don't Know","9" = 'Refused')) +
   labs(x = "", y = "Count", title = "Race") +
   coord_flip()
-```
-
-
-# Who were the respondents (part 1)
-```{r describtive_stats_1, echo=FALSE}
-grid.arrange(gender, r_race, age, hispanic)
 ```
 
 
@@ -121,11 +128,6 @@ household_size <- ggplot(data = df, aes(x = hh1)) +
   labs(x = "", y = "Count", title = "Household Size")
 ```
 
-# Who were the respondents (part 2)
-```{r describtive_stats_2, echo=FALSE}
-grid.arrange(employment, education, income, household_size)
-```
-
 
 ```{r marrital status, echo=FALSE}
 # Marital status
@@ -152,18 +154,6 @@ children <- ggplot(data = df, aes(x = par)) +
   labs(x = "", y = "Count", title = "Children <18 living in household")
 ```
 
-```{r Hispanic, echo=FALSE}
-# Hispanic
-df[, "hisp"] <- as.factor(df[, "hisp"])
-#summary(df$hisp)
-#str(df$hisp)
-
-hispanic <- ggplot(data = df, aes(x = hisp)) + 
-  geom_bar() + 
-  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
-  labs(x = "", y = "Count", title = "Are you of Hispanic or Latino background?")
-```
-
 
 ```{r life quality, echo=FALSE}
 # Life quality
@@ -172,9 +162,18 @@ df[, "q1"] <- as.factor(df[, "q1"])
 #str(df$q1)
 
 life_quality <- ggplot(data = df, aes(x = q1)) + 
-  geom_bar() + 
+  geom_bar(aes(y = aes(y = (..count..)/sum(..count..))) + 
   scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
   labs(x = "", y = "Count", title = "Quality of life") + coord_flip()
+```
+# Who were the respondents (part 1)
+```{r describtive_stats_1, echo=FALSE}
+grid.arrange(gender, r_race, age, hispanic)
+```
+
+# Who were the respondents (part 2)
+```{r describtive_stats_2, echo=FALSE}
+grid.arrange(employment, education, income, household_size)
 ```
 
 #Who were the respondents (part 3)
@@ -183,38 +182,159 @@ life_quality <- ggplot(data = df, aes(x = q1)) +
 grid.arrange(marital_status, sexual_orientation, children, life_quality)
 ```
 
-#Happiness vs presence of children in the household
+#Quality of Life vs presence of children in the household
+
+### Looking at the graph below, it appears that households without children are less likely to say that their quality of life is Excellent. However, using the chi square test, we see that the p-value is high, indicating that there is not enough evidence to conclude that there are differences in quality of life among people with and without children <18 in the household. 
+
+##### Exludes 32 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on whether they have children under 18 in the household.
 
 ```{r life quality vs children, echo=FALSE}
 # Life quality vs children
 
-life_quality_vs_children <- ggplot(data = df, aes(x = q1)) + 
-  geom_bar() + 
-  scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
-  labs(x = "", y = "Count", title = "Quality of life vs Children in the household") + facet_wrap(~par)
+quality_vs_children <- df[df$par!="8" & df$par!="9" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_children_plot <- as.data.frame(with(quality_vs_children, table(par,q1)))
+
+quality_vs_children_plot <- ddply(quality_vs_children_plot, .(par), transform, p = Freq/sum(Freq))
+
+quality_vs_children_plot[,"q1"] <- revalue(quality_vs_children_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+quality_vs_children_plot[,"par"] <- revalue(quality_vs_children_plot[,"par"], c("1" = "Children <18 = Yes", "2" = "Children <18 = No"))
+
+ggplot(quality_vs_children_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~par) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Presence of Children under 18 in the Household")
+
+chisq.test(quality_vs_children[,"par"], quality_vs_children[,"q1"])
 ```
+
+#Quality of Life vs Use of Cell Phones
+
+### Looking at the graph below, it appears that respondents that use cellphones are more likely to say that their quality of life is Excellent. Using the chi square test, we see that the p-value is low, indicating that there is evidence to conclude that there are differences in the quality of life levels among people that use internet on the phone and those that don't. 
+
+##### Exludes 22 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on whether they use internet on their cellphone.
+
+```{r life quality vs internet on cell phones, echo=FALSE}
+# Life quality vs use of internet on cellphone
+# summary(df[,"intmob"])
+df[,"intmob"] <- as.factor(df[,"intmob"])
+
+quality_vs_phoneNet <- df[df$intmob!="8" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_phoneNet_plot <- as.data.frame(with(quality_vs_phoneNet, table(intmob,q1)))
+
+quality_vs_phoneNet_plot <- ddply(quality_vs_phoneNet_plot, .(intmob), transform, p = Freq/sum(Freq))
+
+quality_vs_phoneNet_plot[,"q1"] <- revalue(quality_vs_phoneNet_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+quality_vs_phoneNet_plot[,"intmob"] <- revalue(quality_vs_phoneNet_plot[,"intmob"], c("1"="Internet on Cellphone = Yes", "2" = "Internet on Cellphone = No"))
+  
+ggplot(quality_vs_phoneNet_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~intmob) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Use of Internet on Cellphone")
+
+chisq.test(quality_vs_phoneNet[,"intmob"], quality_vs_phoneNet[,"q1"])
+```
+
+#Quality of Life vs Use of Social Networks (Facebook, Twitter, LinkedIn, etc)
+
+### Looking at the graph below, the users and non-users of social networks appear to report their quality of life levels similarly. Using the chi square test, we see that the p-value is high, indicating that there is no evidence to conclude that there are differences in the quality of life levels between users and non-users of social networks. 
+
+##### Exludes 371 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on the use of social networks. Respondents who do not use internet were also exlcluded.
+
+```{r life quality vs social networks, echo=FALSE}
+# Life quality vs social networks
+# summary(df[,"act87"])
+df[,"act87"] <- as.factor(df[,"act87"])
+
+# summary(df[,"act112"])
+df[,"act112"] <- as.factor(df[,"act112"])
+
+quality_vs_socNetworks <- df[df$act87!="9" & !is.na(df$act87) & df$act112!="9" & !is.na(df$act112) & df$act112!="8" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_socNetworks <- subset(quality_vs_socNetworks, select = c(act87, act112, q1))
+
+for (i in 1:nrow(quality_vs_socNetworks)){
+  if (quality_vs_socNetworks[i,"act87"]=="1" |  quality_vs_socNetworks[i,"act112"]=="1"){
+    quality_vs_socNetworks[i,"SN_user"] <- "Social Network User = Yes"
+  }
+  else{
+    quality_vs_socNetworks[i,"SN_user"] <- "Social Network User = No"
+  }
+}
+
+quality_vs_socNetworks_plot <- as.data.frame(with(quality_vs_socNetworks, table(SN_user,q1)))
+
+quality_vs_socNetworks_plot <- ddply(quality_vs_socNetworks_plot, .(SN_user), transform, p = Freq/sum(Freq))
+
+quality_vs_socNetworks_plot[,"q1"] <- revalue(quality_vs_socNetworks_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+ggplot(quality_vs_socNetworks_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~SN_user) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Use of Social Networks")
+
+chisq.test(quality_vs_socNetworks[,"SN_user"], quality_vs_socNetworks[,"q1"])
 
 
 ```{r} 
-##### SAUL & UDIT's Part ----- Technology and Relationship
+#SAUL & UDIT's Part ----- Technology and Relationship
 
 # 1 Ex. Do people that met online [rel1, 1] perceive their quality of life higher [q1] or lower?
 
-onlineRel <- mean((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
-offlineRel<- mean((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+# absolute values of quality of life and dating 
+ggplot(data =df) + geom_bar(aes(x = q1 , colour = q1)) + facet_grid(~rel1)
 
-hist((df[df[,"rel1"] == 1, "q1"]), na.rm = TRUE)
+indhap <- which(df$q1 < 6) 
+indmet <- which(df$rel1 == 1 |df$rel1 == 2)
 
-hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
+finind <- intersect(indhap,indmet)
+
+hap <- df[finind, "q1"]
+met <- df[finind, "rel1"]
+
+ex<- table(hap,met)
+ex
+ex1df <- data.frame(ex)
+levels(ex1df$met) <- c("Met online", "Met offline")
+
+#absoloute numbers for happiness and how people met
+ggplot(data = ex1df , aes(x = hap, y = Freq)) + geom_bar(stat = "identity") + facet_grid(~ met) + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and Origin of Relationship")
+
+
+indOffline <- which(df$rel1 == 1)
+finind2 <- intersect(indhap,indOffline)
+
+hap2 <- df[finind2, "q1"]
+met2 <- df[finind2, "rel1"]
+ex2<- table(hap2,met2)
+ex1df2 <- data.frame(ex2)
+
+ggplot(data = ex1df2 , aes(x = hap2, y = Freq)) + geom_bar(stat = "identity")  + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and of Relationships Begun Online") 
 
 
 
 # 2 Does technology assist in meeting a partner? 
 
+c1 = table(df$celldatea,df$celldateb)
+c1vec = as.vector(c1[1:2,1:2])
+names(c1vec) = c("calling / texting", "calling","texting","neither")
+c1df = data.frame(c1vec)
+p1 = ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightblue',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=c1vec), vjust=-0.2, color='darkblue')
+
+d1 = table(df$intdatec,df$intdated)
+d1vec = as.vector(d1[1:2,1:2])
+names(d1vec) = c("search / ask out", "ask out","search","neither")
+d1df = data.frame(d1vec)
+p2 = ggplot(d1df,aes(x = rownames(d1df),y = d1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=d1vec), vjust=-0.2, color='darkgreen')
+
+e1 = table(df$snsdate1c,df$snsdate1e)
+e1vec = as.vector(e1[1:2,1:2])
+names(e1vec) = c("ask out / follow/friend","ask out","follow/friend","neither")
+e1df=data.frame(e1vec)
+p3 = ggplot(e1df,aes(x = rownames(e1df),y = e1vec)) + geom_bar(stat="identity",fill='lightyellow',color='black') + labs(x="Using Social Media to meet people",y="Number of people")+geom_text(aes(label=e1vec), vjust=-0.2, color='black')
 
 
-
-# 3 Is there a difference between people’s happiness with their partner for those who met their person online vs offline?
+g1 = table(df$date5a,df$date5b)
+g1vec = as.vector(g1[1:2,1:2])
+names(g1vec) = c("used OD / got married","used OD","got married","neither")
+g1df = data.frame(g1vec)
+p4 = ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightpink',color='black') + labs(x="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), vjust=-0.2, color='black')
+ 
+grid.arrange(p1,p2,p3,p4,nrow=2)
 
 
 
@@ -224,7 +344,6 @@ hist((df[df[,"rel1"] == 2, "q1"]), na.rm = TRUE)
 sum(((df[,"mar4"] == 1) *1), na.rm = TRUE) # total number of people looking for a relationship 
 
 
-
 sum((df[df[,"mar4"] == 1, "date6"] == 1)*1, na.rm = TRUE) #number of people that are looking for a relationship & using online dating 
 sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that are looking for a relationship &  are NOT using online dating 
 
@@ -232,11 +351,20 @@ sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that
 
 # 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
 
-sum((df$meet == 1), na.rm = TRUE) #easy to meet 
-sum((df$meet == 2), na.rm = TRUE) # difficult 
+nrow((df$meet == 1), na.rm = TRUE) #easy to meet 
+nrow((df$meet == 2), na.rm = TRUE) # difficult 
 
+<<<<<<< HEAD
+=======
+h1 = table(df$meet,df$date6)
+h1vec = as.vector(g1[1:2,1:2])
+names(h1vec) = c("easy to meet / used OD","difficult to meet / used OD","easy to meet / did not use OD","difficult to meet / did not use OD")
+h1df = data.frame(h1vec)
+ggplot(h1df,aes(x = rownames(h1df),y = h1vec)) + geom_bar(stat="identity",fill='orange',color='black') + labs(x="Difficulty in meeting people vs Usage of Online Dating",y="Number of people")+geom_text(aes(label=h1vec), vjust=-0.2, color='black')
 
+# 68 people say that its easy to meet people while 66 people feel that it is difficult to meet people. However, only 18 out of the those 66 people actually have a profile on a online dating website.
 
+>>>>>>> 0c67ae6f1125c9051ed6feac58befe3e822a6dcc
 sum((df[df[,"date6"] == 1 , "meet"] == 1) , na.rm =  TRUE) # number of people with an online dating page, that find it easy to meet people 
 
 sum((df[df[,"date6"] == 1 , "meet"] == 2) , na.rm =  TRUE) # number of people with an online dating page, that find it difficult  to meet people 
@@ -249,9 +377,6 @@ summary(df[,"date6"] == 1)
 summary(df[,"meet"] == 1 )
 
 
-# 6 Does meeting a partner online fostering a bonding relationship with partner? For example, from the question about someone believes that internet / cellphone have a NEGATIVE / ZERO impact with relationship [REL6/ REL7] → see % of them that use cellphone to send / receive nude pictures [Q13] and not having any fight within 30 days [REL8] ☺ ☺
-
-
 
 # 7 Ex. How is the use of Social Media Networks and Twitter affect relationships?
 #Can we see the relationship between marital status [MAR] / gender [SEX] / confident [DATE7] / social activity [LOC3] with using online dating  [DATE1A / DATE2A]? For example to see married men / women use online dating as well ☺ ? The initial hypothesis is that: only single / divorced men / women that use online dating
@@ -261,19 +386,49 @@ summary(df[,"meet"] == 1 )
 # 8 Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
 
 
+# We can use logistic regression to find the impact of having a common email account, a shared social networking profile, a shared online calendar, and shared online passwords on relationships. 
+
+# Currently 115 people say that internet and email has had a major impact on their relationship, while 213 people say that it has had a negative impact. So, for our baseline model, we will assume that internet always has a negative impact, and out baseline accuracy will be 115/115+213  = 35%. Can we come up with a logistic regression model which improves this accuracy number.
+
+library(caTools)
+df1 = subset(df, rel6 == 1 | rel6 == 2)
+df1$rel6 = ifelse(df1$rel6==1,0,1) #convert rel6 into a binomial variable
+set.seed(1000)
+split = sample.split(df1$rel6,SplitRatio=0.7) # divide the data into training and test sets, with 70% data in the training set
+train = subset(df1,split==TRUE) #Training set
+test = subset(df1, split==FALSE)# Test set
+model1 = glm(rel6~rel4a+rel4b+rel4c + rel5,data=train,family=binomial)# Logistic Regression model
+summary(model1)
+predictTest = predict(model1,newdata=test)# making predictions on the test set using our model 
+table(test$rel6,predictTest > 0.5)#checking the prediction accuracy using a threshold of 0.5
 
 
-# 8 Would you say that technolgy is having a major impact on your relationship
-
-sum(((df[,"rel6"] == 1)* 1), na.rm = TRUE) #major
-sum(((df[,"rel6"] == 2)* 1), na.rm = TRUE) #minor
-sum(((df[,"rel6"] == 3)* 1), na.rm = TRUE) #no effect
 
 
+# 9 Would you say that technolgy is having a major impact on your relationship rel6, and if so what kind of impact rel7
+
+ggplot(data = df) + geom_bar(aes(x=rel6))
+
+impactIndex <- which(df$rel6 == 1 | df$rel6 == 2)
+posNegIndex <- which(df$rel7 == 1 | df$rel7 == 2)        
+
+comIndex <- intersect(impactIndex,posNegIndex)
+
+impact <- df[comIndex,"rel6"]
+posNeg <- df[comIndex,"rel7"]
+
+impactPN <- table(impact,posNeg)
+
+impactVec <- as.vector(impactPN)
+names(impactVec) <- c("Major Positive Impact", "Minor Positive Impact", "Major Negative Impact", "Minor Negative Impact") 
+dfImpactPN <- as.data.frame(impactVec)
+
+ggplot(dfImpactPN,aes(x = rownames(dfImpactPN),y = impactVec)) + geom_bar(stat="identity",fill='grey') + labs(y="Frequency",x="Impact of Technology on Relationship")+geom_text(aes(label=impactVec), vjust=-0.2)
 
 ```
 
 
+<<<<<<< HEAD
 ```{r} 
 ##### Shieron's Part ----- Technology and Income
 
@@ -315,6 +470,34 @@ coef (summary(model_out2))
 ggplot(data = transform(df, home3nw = c("Yes, I use internet", "No, I don't", "I don't know", "N/A")[as.numeric(home3nw)]), aes(x = inc, fill = inc)) + geom_bar() + facet_grid (home3nw ~ .) + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + labs(x = "Income (in US$)", y = "Count", title = "Income and Using Internet at Home") + theme(legend.position="none")
 
 ggplot(data = transform(df[df[,"home3nw"] == 1 & df[,"modem4b"] < 8,], modem4b = c("Dial-up", "DSL-enabled phone line", "Cable modem", "Wireless", "Fiber optic")[as.numeric(modem4b)]), aes(x = inc, fill = inc)) + geom_bar() + facet_grid (modem4b ~ .) + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + labs(x = "Income (in US$)", y = "Count", title = "Income and Using Internet at Home") + theme(legend.position="none", strip.text.x = element_text(size = 4, colour = "black", angle = 90))
+=======
+Technology and Education & Employment
+```{r}
+# use smartphone/Internet vs. edu level
+use.smartphone <- as.factor(df[ , 'q12'])
+use.internet <- as.factor(df[ , 'intuse'])
+edu <- as.factor(df[ , 'educ2'])
+df.edu <- as.data.frame(cbind(use.internet,use.smartphone))
+df.edu <- cbind(df.edu,edu)
+
+
+# edu vs. income 
+income <- as.factor(df[ , 'inc'])
+df.income <- cbind(df.edu,income)
+
+# remove all 98 and 98, which stand for don't know and don't want to tell
+df.income <- subset(df.income, df.income[ ,'edu'] != 98)
+df.income <- subset(df.income, df.income[ ,'edu'] != 99)
+df.income <- subset(df.income, df.income[ ,'income']!= 98)
+df.income <- subset(df.income, df.income[ ,'income']!= 99)
+
+income.edu <- df.income[ , c('edu','income')]
+
+ggplot(income.edu, aes(edu, ..count..)) + geom_bar(aes(fill = income), position = "dodge")
+
+#logistic regression on income and edu level 
+glm(income ~ edu,data=income.edu, family = binomial)
+>>>>>>> b8d16135017ad43db01e57866a1bff0abf4d88a9
 
 ```
 
