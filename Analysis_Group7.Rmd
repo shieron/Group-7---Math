@@ -470,9 +470,72 @@ coef (summary(model_out2))
 ggplot(data = transform(df, home3nw = c("Yes, I use internet", "No, I don't", "I don't know", "N/A")[as.numeric(home3nw)]), aes(x = inc, fill = inc)) + geom_bar() + facet_grid (home3nw ~ .) + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + labs(x = "Income (in US$)", y = "Count", title = "Income and Using Internet at Home") + theme(legend.position="none")
 
 ggplot(data = transform(df[df[,"home3nw"] == 1 & df[,"modem4b"] < 8,], modem4b = c("Dial-up", "DSL-enabled phone line", "Cable modem", "Wireless", "Fiber optic")[as.numeric(modem4b)]), aes(x = inc, fill = inc)) + geom_bar() + facet_grid (modem4b ~ .) + scale_x_discrete(labels = c("1"="<30K", "2"="30K - 75K", "3"="75K - 150K", "9"=">150K", "99" = "N/A")) + labs(x = "Income (in US$)", y = "Count", title = "Income and Using Internet at Home") + theme(legend.position="none", strip.text.x = element_text(size = 4, colour = "black", angle = 90))
+
+#####################
+#Distribution between income and modem usage at home [MODEM48]
+
+
+##########################
+#Income and type of internet usage [WEB1-A]
+
+
+
+#####################
+#Income [INC] and social media update [LOC3]
+
+# locate only the desired values and make sure both valiarble have a valid input
+indCash <- which(df$inc < 10)
+indShare <- which(df$loc2a == 1 | df$loc2a == 2)
+cashShareInd <- intersect(indCash,indShare)
+
+cash <- df[cashShareInd, "inc"]
+share<- df[cashShareInd, "loc2a"]
+
+# turn two vectors with desired info into a data frame
+tabCS <- table(cash,share)
+cashSharedf <- data.frame(tabCS)
+
+# label the levels of each column
+levels(cashSharedf$cash) <- c("< $10K", "$10K - $20K",  "$20K - $30K", "$30K - $40K", "$40K - $50K", "$500K - $75K", "$75K - $100K", "$100K - $150K", ">$150K")
+levels(cashSharedf$share) <- c("Share Location" , "Don't Share Location")
+
+
+ggplot(data=cashSharedf , aes(x = cash, y = Freq)) + geom_bar(stat = "identity") + facet_grid(~ share) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+#########################3
+#Less social media update, is it because they have family [MAR]?
+
+fbInx <- which(df$act87 == 1 |df$act87 == 2)
+marriedInx <- which(df$mar < 8)
+terminx <- intersect(fbInx,marriedInx)
+
+fb <- (df[terminx, "act87"])
+mar <-(df[terminx, "mar"])
+
+fbMartab <- table(fb,mar)
+fbQ <- data.frame(fbMartab)
+
+levels(fbQ$fb) <- c("Use Facebook","Don't Use Facebook")
+levels(fbQ$mar) <- c("Married","Living with a partner","Divorced", "Separated", "Widowed" ,"Never been married")
+fbQ$count <- fbQ$Freq
+
+ggplot(data = fbQ, aes(x = mar, y= Freq)) + geom_bar(stat = "identity") + facet_grid(~fb) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(x = "",y = "Frequency", title = "Relationships and Facebook Usage")
+
+
+```
+
+
+
+
+
+
+
+
+```{r}
 =======
 Technology and Education & Employment
-```{r}
+
 # use smartphone/Internet vs. edu level
 use.smartphone <- as.factor(df[ , 'q12'])
 use.internet <- as.factor(df[ , 'intuse'])
