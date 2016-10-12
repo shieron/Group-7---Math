@@ -1,6 +1,6 @@
 ---
 title: "Technology, Quality of Life, and Relationships"
-output: pdf_document
+output: html_document
 ---
 
 ```{r loading libraries, echo=FALSE}
@@ -162,9 +162,10 @@ df[, "q1"] <- as.factor(df[, "q1"])
 #str(df$q1)
 
 life_quality <- ggplot(data = df, aes(x = q1)) + 
-  geom_bar(aes(y = aes(y = (..count..)/sum(..count..))) + 
-  scale_x_discrete(labels = c("1"="Excellent", "2"="Vert good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
   labs(x = "", y = "Count", title = "Quality of life") + coord_flip()
+  
 ```
 # Who were the respondents (part 1)
 ```{r describtive_stats_1, echo=FALSE}
@@ -270,13 +271,11 @@ ggplot(quality_vs_socNetworks_plot, aes(q1, p)) + geom_bar(stat = "identity") + 
 chisq.test(quality_vs_socNetworks[,"SN_user"], quality_vs_socNetworks[,"q1"])
 
 
-```{r} 
 #SAUL & UDIT's Part ----- Technology and Relationship
 
 # 1 Ex. Do people that met online [rel1, 1] perceive their quality of life higher [q1] or lower?
 
 # absolute values of quality of life and dating 
-ggplot(data =df) + geom_bar(aes(x = q1 , colour = q1)) + facet_grid(~rel1)
 
 indhap <- which(df$q1 < 6) 
 indmet <- which(df$rel1 == 1 |df$rel1 == 2)
@@ -287,7 +286,6 @@ hap <- df[finind, "q1"]
 met <- df[finind, "rel1"]
 
 ex<- table(hap,met)
-ex
 ex1df <- data.frame(ex)
 levels(ex1df$met) <- c("Met online", "Met offline")
 
@@ -309,91 +307,79 @@ ggplot(data = ex1df2 , aes(x = hap2, y = Freq)) + geom_bar(stat = "identity")  +
 
 # 2 Does technology assist in meeting a partner? 
 
+library(gridExtra)
 c1 = table(df$celldatea,df$celldateb)
 c1vec = as.vector(c1[1:2,1:2])
 names(c1vec) = c("calling / texting", "calling","texting","neither")
 c1df = data.frame(c1vec)
-p1 = ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightblue',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=c1vec), vjust=-0.2, color='darkblue')
+p1 = ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightblue',color='black') + labs(x="",title="Using Phones to meet people",y="Number of people")+geom_text(aes(label=c1vec), size=3,vjust=1.2, color='darkblue')
 
-d1 = table(df$intdatec,df$intdated)
-d1vec = as.vector(d1[1:2,1:2])
-names(d1vec) = c("search / ask out", "ask out","search","neither")
-d1df = data.frame(d1vec)
-p2 = ggplot(d1df,aes(x = rownames(d1df),y = d1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="Using Internet to meet people",y="Number of people")+geom_text(aes(label=d1vec), vjust=-0.2, color='darkgreen')
+search = df$intdatec
+search = ifelse(search>2,NA,search)
+askout = df$intdated
+askout = ifelse(askout>2,NA,askout)
+dtf1 = as.data.frame(table(search,askout))
+p2 = ggplot(dtf1,aes(x=search,y=Freq))+geom_bar(stat="identity",aes(fill=askout))+scale_x_discrete(labels = c("1"="Search online", "2"="Don't search online"))+scale_fill_discrete(name="Ask out",labels=c("Yes","No"))+labs(x="",title="Using Internet to meet people",y="Number of People")+geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1.5, position = "stack")
 
-e1 = table(df$snsdate1c,df$snsdate1e)
-e1vec = as.vector(e1[1:2,1:2])
-names(e1vec) = c("ask out / follow/friend","ask out","follow/friend","neither")
-e1df=data.frame(e1vec)
-p3 = ggplot(e1df,aes(x = rownames(e1df),y = e1vec)) + geom_bar(stat="identity",fill='lightyellow',color='black') + labs(x="Using Social Media to meet people",y="Number of people")+geom_text(aes(label=e1vec), vjust=-0.2, color='black')
-
+follow = df$snsdate1e
+follow = ifelse(follow>2,NA,follow)
+ask = df$snsdate1c
+ask = ifelse(ask>2,NA,ask)
+dtf2 = as.data.frame(table(follow,ask))
+p3 = ggplot(dtf2,aes(x=follow,y=Freq))+geom_bar(stat="identity",aes(fill=ask))+scale_x_discrete(labels = c("1"="Follow/friend", "2"="Don't follow/friend"))+scale_fill_discrete(name="Ask out",labels=c("Yes","No"))+labs(x="",title="Using Social Media to meet people ",y="Number of People")+geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1, position = "stack")
 
 g1 = table(df$date5a,df$date5b)
 g1vec = as.vector(g1[1:2,1:2])
 names(g1vec) = c("used OD / got married","used OD","got married","neither")
 g1df = data.frame(g1vec)
-p4 = ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightpink',color='black') + labs(x="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), vjust=-0.2, color='black')
+p4 = ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightpink',color='black') + labs(x="",title="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), size=3,vjust=1.2, color='black')
+
  
 grid.arrange(p1,p2,p3,p4,nrow=2)
+
+
 
 
 
 # 4 For people who say that they are looking for a partner, look at the proportion of who are using online dating
 
 
-sum(((df[,"mar4"] == 1) *1), na.rm = TRUE) # total number of people looking for a relationship 
-
-
-sum((df[df[,"mar4"] == 1, "date6"] == 1)*1, na.rm = TRUE) #number of people that are looking for a relationship & using online dating 
-sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that are looking for a relationship &  are NOT using online dating 
-
 lookmeet=df$mar4
 lookmeet = ifelse(lookmeet>2,NA,lookmeet)
 usedod = df$date6
 usedod = ifelse(usedod>2,NA,usedod)
 dtf = as.data.frame(table(lookmeet,usedod))
-ggplot(dtf,aes(x=lookmeet,y=Freq))+geom_bar(stat="identity",aes(fill=usedod))+scale_x_discrete(labels = c("1"="Looking", "2"="Not looking"))+scale_fill_discrete(name="Current Online Dating Profile",labels=c("Yes","No"))+labs(x="Romantic Partner",y="Number of People")
+ggplot(dtf,aes(x=lookmeet,y=Freq))+geom_bar(stat="identity",aes(fill=usedod))+scale_x_discrete(labels = c("1"="Looking", "2"="Not looking"))+scale_fill_discrete(name="",labels=c("Yes","No"))+labs(x="Romantic Partner",y="Number of People",title="Looking for a partner vs Online Dating") + geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1.5, position = "stack")
+
 
 # 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
 
-nrow((df$meet == 1), na.rm = TRUE) #easy to meet 
-nrow((df$meet == 2), na.rm = TRUE) # difficult 
 
-<<<<<<< HEAD
-=======
-h1 = table(df$meet,df$date6)
-h1vec = as.vector(g1[1:2,1:2])
-names(h1vec) = c("easy to meet / used OD","difficult to meet / used OD","easy to meet / did not use OD","difficult to meet / did not use OD")
-h1df = data.frame(h1vec)
-ggplot(h1df,aes(x = rownames(h1df),y = h1vec)) + geom_bar(stat="identity",fill='orange',color='black') + labs(x="Difficulty in meeting people vs Usage of Online Dating",y="Number of people")+geom_text(aes(label=h1vec), vjust=-0.2, color='black')
+meet=df$meet
+meet = ifelse(meet>2,NA,meet)
+prof = df$date6
+prof = ifelse(prof>2,NA,prof)
+dtf3 = as.data.frame(table(meet,prof))
+ggplot(dtf3,aes(x=meet,y=Freq))+geom_bar(stat="identity",aes(fill=prof))+scale_x_discrete(labels = c("1"="Easy to meet", "2"="Difficult to meet"))+scale_fill_discrete(name="",labels=c("Yes","No"))+labs(x="",title="Access to people in city",y="Number of People")+geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1.5, position = "stack") + theme(axis.text.x = element_text(angle=60, hjust=1))
+
+
 
 # 68 people say that its easy to meet people while 66 people feel that it is difficult to meet people. However, only 18 out of the those 66 people actually have a profile on a online dating website.
 
->>>>>>> 0c67ae6f1125c9051ed6feac58befe3e822a6dcc
-sum((df[df[,"date6"] == 1 , "meet"] == 1) , na.rm =  TRUE) # number of people with an online dating page, that find it easy to meet people 
-
-sum((df[df[,"date6"] == 1 , "meet"] == 2) , na.rm =  TRUE) # number of people with an online dating page, that find it difficult  to meet people 
-
-
-sum((df[df[,"date6"] == 1 , "meet"]) , na.rm =  TRUE) # 59 people with dating pages answered the question about th edifficulty to meet people. 
-
-summary(df[,"date6"] == 1) 
-
-summary(df[,"meet"] == 1 )
 
 
 
-# 7 Ex. How is the use of Social Media Networks and Twitter affect relationships?
-#Can we see the relationship between marital status [MAR] / gender [SEX] / confident [DATE7] / social activity [LOC3] with using online dating  [DATE1A / DATE2A]? For example to see married men / women use online dating as well ☺ ? The initial hypothesis is that: only single / divorced men / women that use online dating
 
 
 
 # 8 Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
 
 
-# We can use logistic regression to find the impact of having a common email account, a shared social networking profile, a shared online calendar, and shared online passwords on relationships. 
+# We thought it would be interesting to use logistic regression to find the impact of having a common email account, a shared social networking profile, a shared online calendar, and shared online passwords on relationships. 
 
-# Currently 115 people say that internet and email has had a major impact on their relationship, while 213 people say that it has had a negative impact. So, for our baseline model, we will assume that internet always has a negative impact, and out baseline accuracy will be 115/115+213  = 35%. Can we come up with a logistic regression model which improves this accuracy number.
+# Currently 115 people say that internet and email has had a major impact on their relationship, while 213 people say that it has had a negative impact. So, for our baseline model, we will assume that internet always has a negative impact, and out baseline accuracy will be 115/115+213  = 35%. We come up with a logistic regression model which improves this accuracy number.
+
+# We first divided our dataset into training and test sets, with 70% data in the traning set, because we need more data to train our model on. We then build a logistic regression model, and obtained a AIC value of 255.91. None of the variable were significantand the probablity values for the variables were fairly high, which tells us that probably having common accounts and sharing passwords does not affect relationships as much. To explore further, we tried to make predictions with this model on the test set, and found that accuracy numbers increased to 50% (using a threshold of 0.5).
 
 library(caTools)
 df1 = subset(df, rel6 == 1 | rel6 == 2)
@@ -403,11 +389,12 @@ split = sample.split(df1$rel6,SplitRatio=0.7) # divide the data into training an
 train = subset(df1,split==TRUE) #Training set
 test = subset(df1, split==FALSE)# Test set
 model1 = glm(rel6~rel4a+rel4b+rel4c + rel5,data=train,family=binomial)# Logistic Regression model
-summary(model1)
+screenreg(model1)
 predictTest = predict(model1,newdata=test)# making predictions on the test set using our model 
+
 table(test$rel6,predictTest > 0.5)#checking the prediction accuracy using a threshold of 0.5
 
-
+# Out of sample Accuracy = (5+34)/(5+25+14+34) = 50%
 
 
 # 9 Would you say that technolgy is having a major impact on your relationship rel6, and if so what kind of impact rel7
@@ -425,15 +412,15 @@ posNeg <- df[comIndex,"rel7"]
 impactPN <- table(impact,posNeg)
 
 impactVec <- as.vector(impactPN)
-names(impactVec) <- c("Major Positive Impact", "Minor Positive Impact", "Major Negative Impact", "Minor Negative Impact") 
+names(impactVec) <- c("Major Positive", "Minor Positive", "Major Negative", "Minor Negative") 
 dfImpactPN <- as.data.frame(impactVec)
 
-ggplot(dfImpactPN,aes(x = rownames(dfImpactPN),y = impactVec)) + geom_bar(stat="identity",fill='grey') + labs(y="Frequency",x="Impact of Technology on Relationship")+geom_text(aes(label=impactVec), vjust=-0.2)
+ggplot(dfImpactPN,aes(x = rownames(dfImpactPN),y = impactVec)) + geom_bar(stat="identity",fill='grey') + labs(y="Number of People",x="",title="Impact of Technology on Relationship")+geom_text(aes(label=impactVec), vjust=1) + theme(axis.text.x = element_text(angle=60, hjust=1))
 
 ```
 
 
-<<<<<<< HEAD
+
 ```{r} 
 ##### Shieron's Part ----- Technology and Income
 
@@ -579,4 +566,4 @@ glm(income ~ edu,data=income.edu, family = binomial)
 
 ```
 
->>>>>>> 13632aef6cb16813c8cc22d79e0d399e339973b4
+
