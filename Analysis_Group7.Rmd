@@ -347,7 +347,12 @@ sum(((df[,"mar4"] == 1) *1), na.rm = TRUE) # total number of people looking for 
 sum((df[df[,"mar4"] == 1, "date6"] == 1)*1, na.rm = TRUE) #number of people that are looking for a relationship & using online dating 
 sum((df[df[,"mar4"] == 1, "date6"] == 2)*1, na.rm = TRUE) #number of people that are looking for a relationship &  are NOT using online dating 
 
-
+lookmeet=df$mar4
+lookmeet = ifelse(lookmeet>2,NA,lookmeet)
+usedod = df$date6
+usedod = ifelse(usedod>2,NA,usedod)
+dtf = as.data.frame(table(lookmeet,usedod))
+ggplot(dtf,aes(x=lookmeet,y=Freq))+geom_bar(stat="identity",aes(fill=usedod))+scale_x_discrete(labels = c("1"="Looking", "2"="Not looking"))+scale_fill_discrete(name="Current Online Dating Profile",labels=c("Yes","No"))+labs(x="Romantic Partner",y="Number of People")
 
 # 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
 
