@@ -533,34 +533,44 @@ ggplot(data = fbQ, aes(x = mar, y= Freq)) + geom_bar(stat = "identity") + facet_
 
 
 ```{r}
-=======
-Technology and Education & Employment
+
+# Technology and Education & Employment
+
+#Kirby's data frame
+kcdf <- df
 
 # use smartphone/Internet vs. edu level
-use.smartphone <- as.factor(df[ , 'q12'])
-use.internet <- as.factor(df[ , 'intuse'])
-edu <- as.factor(df[ , 'educ2'])
-df.edu <- as.data.frame(cbind(use.internet,use.smartphone))
-df.edu <- cbind(df.edu,edu)
+use.smartphone <- as.factor(kcdf[ , 'q12'])
+use.internet <- as.factor(kcdf[ , 'intuse'])
+edu <- as.factor(kcdf[ , 'educ2'])
+kcdf.edu <- as.data.frame(cbind(use.internet,use.smartphone))
+kcdf.edu <- cbind(kcdf.edu,edu)
 
 
 # edu vs. income 
-income <- as.factor(df[ , 'inc'])
-df.income <- cbind(df.edu,income)
+income <- as.factor(kcdf[ , 'inc'])
+kcdf.income <- cbind(kcdf.edu,income)
 
 # remove all 98 and 98, which stand for don't know and don't want to tell
-df.income <- subset(df.income, df.income[ ,'edu'] != 98)
-df.income <- subset(df.income, df.income[ ,'edu'] != 99)
-df.income <- subset(df.income, df.income[ ,'income']!= 98)
-df.income <- subset(df.income, df.income[ ,'income']!= 99)
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'edu'] != 98)
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'edu'] != 99)
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'income']!= 98)
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'income']!= 99)
 
-income.edu <- df.income[ , c('edu','income')]
+income.edu <- kcdf.income[ , c('edu','income')]
 
-ggplot(income.edu, aes(edu, ..count..)) + geom_bar(aes(fill = income), position = "dodge")
+# setting level names for income
+income.edu[,"income"] <- revalue(income.edu[,"income"], c("1" = "under 10k", "2" = "10-20k", "3" = "20-30k", "4" = "30-40k", "5" = "40-50k", "6" = "50-75k", "7" = "75-100k", "8" = "100-150k", "9" = "over 150k"))
+
+ggplot(income.edu, aes(edu, fill=income) ) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels = c("1" = "Grade 1-8", "2" = "Incomplete high school", "3" = "Complete high school", "4" = "Some college", "5" = "Associate degree", "6" = "Bachelor's", "7" = "Some postgrad", "8" = "Master's/phd/professional")) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+  labs(x = "", y = "Number of Respondents", title = "Income vs Education")
 
 #logistic regression on income and edu level 
 glm(income ~ edu,data=income.edu, family = binomial)
->>>>>>> b8d16135017ad43db01e57866a1bff0abf4d88a9
+
 
 ```
 
