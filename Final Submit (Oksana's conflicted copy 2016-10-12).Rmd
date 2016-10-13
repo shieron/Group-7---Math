@@ -1,0 +1,494 @@
+---
+title: "Technology, Quality of Life, and Relationships"
+output: html_document
+---
+
+```{r loading libraries, echo=FALSE}
+#Loading libraries
+library(ggplot2)
+library(gridExtra)
+library(scales)
+library(plyr)
+
+#Loading Data
+df <- read.csv("May_2013_Online_Dating_CSV.csv")
+```
+
+```{r gender, echo=FALSE}
+# Gender plot
+
+okdf <- df
+
+okdf[, "sex"] <- as.factor(okdf[, "sex"])
+#summary(okdf[, "sex"])
+#str(okdf[, "sex"])
+
+gender <- ggplot(data = okdf, aes(x = sex, fill = sex)) + 
+  geom_bar() + scale_x_discrete(labels = c("1" = "Male", "2" = "Female")) +
+  labs(x = "Gender", y = "Count", title = "Gender")
+```
+
+```{r sexual orientation, echo=FALSE}
+# Sexual orientation plot
+okdf[, "lgbt"] <- as.factor(okdf[, "lgbt"])
+#summary(okdf$lgbt)
+#str(okdf$lgbt)
+
+sexual_orientation <- ggplot(data = okdf, aes(x = lgbt)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1" = "Heterosexual", "2" = "Gay/lesbian", "3" = "Bisexual", "4" = "Other", "8" = "Don't know", "9" = "Refused")) + coord_flip() +
+  labs(x = "", y = "Count", title = "Sexual Orientation")
+  
+```
+
+```{r Hispanic, echo=FALSE}
+# Hispanic
+okdf[, "hisp"] <- as.factor(okdf[, "hisp"])
+#summary(okdf$hisp)
+#str(okdf$hisp)
+
+hispanic <- ggplot(data = okdf, aes(x = hisp)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Latino Background")
+```
+
+```{r age, echo=FALSE}
+#Age plot
+#summary(okdf$age)
+#str(okdf$age)
+median.age <- median(df$age)
+
+age <- ggplot(data = okdf, aes(x = age)) + 
+  geom_histogram(binwidth = 5, color="black", fill="orange") + 
+  scale_x_continuous(limits = c(15,100), breaks = seq(0, 100, 10)) +
+  labs(x = "Age", y = "Frequency", title = "Age")
+
+```
+
+
+```{r race, echo=FALSE}
+# Race plot
+okdf[, "race"] <- as.factor(okdf[, "race"])
+#summary(okdf$race)
+#str(okdf$race)
+
+r_race <- ggplot(data = okdf, aes(x=reorder(race, -table(race)[race]))) + 
+  geom_bar() + 
+  scale_x_discrete(labels=c("1" = 'White',"2" = 'Black',"3" = 'Asian',"4" = 'Mixed',"5" = 'Native American',"6" = 'Other',"8" = "Don't Know","9" = 'Refused')) +
+  labs(x = "", y = "Count", title = "Race") +
+  coord_flip()
+```
+
+
+```{r employment, echo=FALSE}
+# Employment plot
+okdf[, "emplnw"] <- as.factor(okdf[, "emplnw"])
+#summary(okdf$emplnw)
+#str(okdf$emplnw)
+retired.percent <- 616/2252
+retired.percent <- 942/2252
+
+
+employment <- ggplot(data = okdf, aes(x=reorder(emplnw, -table(emplnw)[emplnw]))) + 
+  geom_bar() + 
+  scale_x_discrete(labels=c("1" = 'Full-time',"2" = 'Part-time',"3" = 'Retired',"4" = 'Not employed',"5" = 'Self-employed',"6" = 'Disabled',"7" = "Student", "8" = 'Other', "9" = "Refused")) +
+  labs(x = "", y = "Count", title = "Employment Level") + coord_flip()
+```
+
+
+```{r income, echo=FALSE}
+# Income plot
+okdf[, "inc"] <- as.factor(okdf[, "inc"])
+#summary(okdf$inc)
+#str(okdf$inc)
+
+income.refused <- 299/2252
+
+income <- ggplot(data = okdf, aes(x = inc)) + 
+  geom_bar() + coord_flip() +
+  scale_x_discrete(labels = c("1" = "under 10k", "2" = "10-20k", "3" = "20-30k", "4" = "30-40k", "5" = "40-50k", "6" = "50-75k", "7" = "75-100k", "8" = "100-150k", "9" = "over 150k", "98" = "Don't Know", "99" = "Refused")) +
+  labs(x = "", y = "Count", title = "Income in thousands USD")
+  
+```
+
+```{r education, echo=FALSE}
+# Education plot
+okdf[, "educ2"] <- as.factor(okdf[, "educ2"])
+#summary(okdf$educ2)
+#str(okdf$educ2)
+
+education <- ggplot(data = okdf, aes(x = educ2)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1" = "Grade 1-8", "2" = "Incomplete high school", "3" = "Complete high school", "4" = "Some college", "5" = "Associate degree", "6" = "Bachelor's", "7" = "Some postgrad", "8" = "Master's/phd/professional", "98" = "Don't know", "99" = "Refused")) +
+  labs(x = "", y = "Count", title = "Education") + coord_flip()
+```
+
+
+```{r household size, echo=FALSE}
+# Household size plot
+okdf[, "hh1"] <- as.factor(okdf[, "hh1"])
+#summary(okdf$hh1)
+#str(okdf$hh1)
+
+household_size <- ggplot(data = okdf, aes(x = hh1)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1" = "1", "2" = "2", "3" = "3", "4" = "4", "5" = "5", "6" = "6+", "8" = "Don't know", "9" = "Refused")) +
+  labs(x = "", y = "Count", title = "Household Size") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+```{r marrital status, echo=FALSE}
+# Marital status
+okdf[, "mar"] <- as.factor(okdf[, "mar"])
+#summary(okdf$mar)
+#str(okdf$mar)
+married.percent <- 1093/2552
+
+marital_status <- ggplot(data = okdf, aes(x = mar)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Married", "2"="Living with Partner", "3"="Divorced", "4"= "Separated", "5" = "Widowed", "6" = "Never been married", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Marital status") + coord_flip()
+```
+
+
+```{r children, echo=FALSE}
+# Children
+okdf[, "par"] <- as.factor(okdf[, "par"])
+#summary(okdf$par)
+#str(okdf$par)
+
+children <- ggplot(data = okdf, aes(x = par)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("1"="Yes", "2"="No", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Children <18 living in household")
+```
+
+
+```{r life quality, echo=FALSE}
+# Life quality
+okdf[, "q1"] <- as.factor(okdf[, "q1"])
+#summary(okdf$q1)
+#str(okdf$q1)
+
+life_quality <- ggplot(data = okdf, aes(x = q1)) + geom_bar() +
+  scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
+  labs(x = "", y = "Count", title = "Quality of life") + coord_flip()
+```
+
+##  **Introduction**   
+Our dataset is compiled of categorical data received through telephone interviews in the USA in 2013. The dataset was originally used for a study on online dating; however through investigation of the variables, insight can be generated on the quality of life for a sample of Americans.
+
+With our core research topic focusing on the sample’s quality of life, the data offers two sections of analysis: firstly through relationships and secondly through Home Economics. 
+
+The following slides will provide an overview of the dataset.
+  
+### **Decriptive Statistics (part 1)**
+
+As seen from below, the respondents were predominantly white, slightly older (median age of 53).
+
+```{r describtive_stats_1, echo=FALSE , warning=FALSE}
+
+grid.arrange(gender, r_race, age, hispanic)
+```
+
+
+### **Decriptive Statistics (part 2)**
+
+The respondents are well educated, with 42% employed full time; however, the number of retirees is also large (27% of all respondents). The majority live in a 2-person household. It is noteworthy to point out that 299 people (13%) refused to disclose their family income level. The second most heard response (also 13%) was earnings of 50-75 thousand USD per year.
+
+```{r describtive_stats_2, echo=FALSE , warning=FALSE}
+grid.arrange(employment, education, income, household_size)
+```
+
+### **Decriptive Statistics (part 3)**
+
+The respondents are predominantly heterosexual; 43% are married. A greater amount of respondents do not have dependants under 18 living in their homes. The quality of life of the respondents resembles a normal distribution.
+
+```{r describtive_stats_3, echo=FALSE, warning=FALSE}
+grid.arrange(marital_status, sexual_orientation, children, life_quality)
+```
+
+
+## **Relationships & Quality of Life**
+
+Within our project, we observed that online dating is a focus of many of the questions. As the objective of our analysis is one of a modern perception of quality of life, and online dating is such a novel phenomenon, we believe it fitting to explore how relationships affect quality of life with a certain focus on online dating.
+
+```{r Relationships & Quality of Life, echo=FALSE, warning=FALSE}
+
+# 3. For people who say that they are looking for a partner, look at the proportion of who are using online dating
+
+lookmeet=df$mar4
+lookmeet = ifelse(lookmeet>2,NA,lookmeet)
+usedod = df$date6
+usedod = ifelse(usedod>2,NA,usedod)
+dtf = as.data.frame(table(lookmeet,usedod))
+ggplot(dtf,aes(x=lookmeet,y=Freq))+geom_bar(stat="identity",aes(fill=usedod))+scale_x_discrete(labels = c("1"="Looking", "2"="Not looking"))+scale_fill_discrete(name="Current Online Dating Profile",labels=c("Yes","No"))+labs(x="Romantic Partner",y="Number of People")
+```
+
+* This shows that there are 138 people at the time of sampling that are looking for a romantic partner.
+
+* Of the further respondents it was seen that 33 individuals had an active online dating profile, whereas, 18 individuals currently searching did not. 
+
+```{r echo=FALSE, warning=FALSE}
+
+# 5 For people that say it’s difficult / easy to meet people in their city/state, see how many people using online dating?
+
+meet=df$meet
+meet = ifelse(meet>2,NA,meet)
+prof = df$date6
+prof = ifelse(prof>2,NA,prof)
+dtf3 = as.data.frame(table(meet,prof))
+ggplot(dtf3,aes(x=meet,y=Freq))+geom_bar(stat="identity",aes(fill=prof))+scale_x_discrete(labels = c("1"="Easy to meet", "2"="Difficult to meet"))+scale_fill_discrete(name="Current Online Dating Profile",labels=c("Yes","No"))+labs(x="Access to people in city",y="Number of People")
+
+```
+
+Of the 50 respondents, 58% of people feel it is difficult to meet people in the city or town where they live. Of this subsample, 62% of people have a currently posted online profile. 
+
+68 people say that its easy to meet people while 66 people feel that it is difficult to meet people. However, only 18 out of the those 66 people actually have a profile on a online dating website.
+ * Of 134 the single people in the sample that were looking for a relationship at the time of interviewing.
+ * 68 people say that its easy to meet people while 66 people feel that it is difficult to meet people. However, only 18 out of the those 66 people actually have a profile on a online dating website.
+   +	this is naturally however a very small and specific subsection of the greater interviewed population, so other dating related questions surrounding this topic with greater response rates will be investigated) 
+   +	of the individuals that find it difficult to date 27% currently had an online dating profile
+   +	Whereas, for individuals that find it easy to date in their city, 20% were actively using an online profile.
+
+```{r echo=FALSE, warning=FALSE}
+
+library(gridExtra)
+c1 = table(df$celldatea,df$celldateb)
+c1vec = as.vector(c1[1:2,1:2])
+names(c1vec) = c("calling / texting", "calling","texting","neither")
+c1df = data.frame(c1vec)
+p1 = ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightblue',color='black') + labs(x="Using Phones to meet people",y="Number of people")+geom_text(aes(label=c1vec), vjust=1.2, color='darkblue')
+
+search = df$intdatec
+search = ifelse(search>2,NA,search)
+askout = df$intdated
+askout = ifelse(askout>2,NA,askout)
+dtf1 = as.data.frame(table(search,askout))
+p2 = ggplot(dtf1,aes(x=search,y=Freq))+geom_bar(stat="identity",aes(fill=askout))+scale_x_discrete(labels = c("1"="Search online", "2"="Don't search online"))+scale_fill_discrete(name="Ask out",labels=c("Yes","No"))+labs(x="Using Internet to meet people",y="Number of People")
+
+follow = df$snsdate1e
+follow = ifelse(follow>2,NA,follow)
+ask = df$snsdate1c
+ask = ifelse(ask>2,NA,ask)
+dtf2 = as.data.frame(table(follow,ask))
+p3 = ggplot(dtf2,aes(x=follow,y=Freq))+geom_bar(stat="identity",aes(fill=ask))+scale_x_discrete(labels = c("1"="Follow/friend", "2"="Don't follow/friend"))+scale_fill_discrete(name="Ask out",labels=c("Yes","No"))+labs(x="Using Social Media to meet people ",y="Number of People")
+
+g1 = table(df$date5a,df$date5b)
+g1vec = as.vector(g1[1:2,1:2])
+names(g1vec) = c("used OD / got married","used OD","got married","neither")
+g1df = data.frame(g1vec)
+p4 = ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightpink',color='black') + labs(x="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), vjust=1.2, color='black')
+ 
+grid.arrange(p1,p2,p3,p4,nrow=2)
+```
+Four ideas – what proportion of people that have used phone, internet, social media or online dating to meet people.
+
+People prefer internet to meet people as opposed to phones. Most individuals in the sample use the internet to search for prospective people to meet, whereas on the phone respondents prefer to ask people out directly by calling them.
+ *	Of the people that used the internet as means of dating (found in the lower two graphs)
+ *Social media in absolute terms is a reasonably unpopular means of dating with only 27 people using social media to friend/follow people and ask them out on dates.
+ *	The greatest use of social media as dating technology tool, is to simply follow or friend individuals without asking them out on a date.
+ *	On the bottom right graph it can be seen that 33% of people that met met people through an online dating website got married or entered a long-term relationship.
+
+
+```{r echo = FALSE, warning=FALSE} 
+
+
+indhap <- which(df$q1 < 6) 
+indmet <- which(df$rel1 == 1 |df$rel1 == 2)
+
+finind <- intersect(indhap,indmet)
+
+hap <- df[finind, "q1"]
+met <- df[finind, "rel1"]
+
+ex<- cbind.data.frame(hap,met)
+
+ex1df <- data.frame(ex)
+
+ex1df <- as.data.frame(with(ex, table(hap,met)))
+
+ex1df[,"met"] <- revalue(ex1df[,"met"], c("1"="Met Online", "2" = "Met offline"))
+
+ex1df <- ddply(ex1df, .(met), transform, p = Freq/sum(Freq))
+
+# happiness vs how people met
+ggplot(data = ex1df , aes(x = hap, y = p)) + geom_bar(stat = "identity") + facet_grid(~ met) + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Percentage", title = "Quality of life vs Origin of Relationship") + geom_text(aes(label = Freq), vjust=-.5)
+
+chisq.test(ex[,"met"],ex[,"hap"])
+
+```
+ * It can be seen that the proportion of people that met offline far greater than the number of people that met online. 
+ *	In general x% of people that met offline said their quality of life was good. 
+ *	X% said their quality of like was excellent or very good relative to x% that said it was fair or poor. 
+ *	Proportionally the people that met online believe their quality of life is better. However, the size of the online sample is very small at X.
+
+
+```{r echo = FALSE , warning= FALSE} 
+
+#8.  Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
+
+library(caTools)
+df1 = subset(df, rel6 == 1 | rel6 == 2)
+df1$rel6 = ifelse(df1$rel6==1,0,1) #convert rel6 into a binomial variable
+set.seed(1000)
+split = sample.split(df1$rel6,SplitRatio=0.7) # divide the data into training and test sets, with 70% data in the training set
+train = subset(df1,split==TRUE) #Training set
+test = subset(df1, split==FALSE)# Test set
+model1 = glm(rel6~rel4a+rel4b+rel4c + rel5,data=train,family=binomial)# Logistic Regression model
+summary(model1)
+```
+
+We can use logistic regression to find the impact of having a common email account, a shared social networking profile, a shared online calendar, and shared online passwords on relationships. 
+
+```{r echo = FALSE , warning= FALSE} 
+
+```
+
+Currently 115 people say that internet and email has had a major impact on their relationship, while 213 people say that it has had a negative impact. So, for our baseline model, we will assume that internet always has a negative impact, and out baseline accuracy will be 115/115+213  = 35%. Can we come up with a logistic regression model which improves this accuracy number.
+
+```{r echo = FALSE} 
+
+#8.  Relationship between privacy [REL4 and REL5] and having a fight in a relationship [REL8]? Does person who shares password/account together tend to have more fights than those who are not?
+
+h1 = table(df$meet,df$date6)
+h1vec = as.vector(g1[1:2,1:2])
+names(h1vec) = c("easy to meet / used OD","difficult to meet / used OD","easy to meet / did not use OD","difficult to meet / did not use OD")
+h1df = data.frame(h1vec)
+ggplot(h1df,aes(x = rownames(h1df),y = h1vec)) + geom_bar(stat="identity",fill='orange',color='black') + labs(x="Difficulty in meeting people vs Usage of Online Dating",y="Number of people")+geom_text(aes(label=h1vec), vjust=-0.2, color='black')
+```
+
+Currently 115 people say that internet and email has had a major impact on their relationship, while 213 people say that it has had a negative impact. So, for our baseline model, we will assume that internet always has a negative impact, and out baseline accuracy will be 115/115+213  = 35%. Can we come up with a logistic regression model which improves this accuracy number.
+
+## **Household Economics & Quality of Life**
+
+### **Quality of Life vs presence of children in the household**
+
+ Looking at the graph below, it appears that households without children are less likely to say that their quality of life is Excellent. However, using the chi square test, we see that the p-value is high, indicating that there is not enough evidence to conclude that there are differences in quality of life among people with and without children <18 in the household. 
+
+Exludes 32 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on whether they have children under 18 in the household.
+
+```{r life quality vs children, echo=FALSE, warning = FALSE}
+# Life quality vs children
+
+# data frame for children and quality of life
+
+quality_vs_children <- df[df$par!="8" & df$par!="9" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_children_plot <- as.data.frame(with(quality_vs_children, table(par,q1)))
+
+quality_vs_children_plot <- ddply(quality_vs_children_plot, .(par), transform, p = Freq/sum(Freq))
+
+quality_vs_children_plot[,"q1"] <- revalue(quality_vs_children_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+quality_vs_children_plot[,"par"] <- revalue(quality_vs_children_plot[,"par"], c("1" = "Children <18 = Yes", "2" = "Children <18 = No"))
+
+ggplot(quality_vs_children_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~par) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Presence of Children under 18 in the Household") + geom_text(aes(label = Freq), vjust=-.5)
+
+chisq.test(quality_vs_children[,"par"], quality_vs_children[,"q1"])
+```
+
+### **Quality of Life vs Use of Cell Phones**
+
+Looking at the graph below, it appears that respondents that use cellphones are more likely to say that their quality of life is Excellent. Using the chi square test, we see that the p-value is low, indicating that there is evidence to conclude that there are differences in the quality of life levels among people that use internet on the phone and those that don't. 
+
+###### Exludes 22 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on whether they use internet on their cellphone.
+
+
+```{r life quality vs internet on cell phones, echo=FALSE, warning = FALSE}
+# Life quality vs use of internet on cellphone
+# summary(df[,"intmob"])
+
+quality_vs_phoneNet <- df[df$intmob!="8" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_phoneNet_plot <- as.data.frame(with(quality_vs_phoneNet, table(intmob,q1)))
+
+quality_vs_phoneNet_plot <- ddply(quality_vs_phoneNet_plot, .(intmob), transform, p = Freq/sum(Freq))
+
+quality_vs_phoneNet_plot[,"q1"] <- revalue(quality_vs_phoneNet_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+quality_vs_phoneNet_plot[,"intmob"] <- revalue(quality_vs_phoneNet_plot[,"intmob"], c("1"="Internet on Cellphone = Yes", "2" = "Internet on Cellphone = No"))
+  
+ggplot(quality_vs_phoneNet_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~intmob) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Use of Internet on Cellphone") + geom_text(aes(label = Freq), vjust=-.5)
+
+chisq.test(quality_vs_phoneNet[,"intmob"], quality_vs_phoneNet[,"q1"])
+```
+
+### **Quality of Life vs Use of Social Networks**
+
+Looking at the graph below, the users and non-users of social networks (Facebook, Twitter, LinkedIn, etc) appear to report their quality of life levels similarly. Using the chi square test, we see that the p-value is high, indicating that there is no evidence to conclude that there are differences in the quality of life levels between users and non-users of social networks. 
+
+###### Exludes 371 respondents who answered "Don't Know" or "Refuse" to either the question on the quality of life or the question on the use of social networks. Respondents who do not use internet were also exlcluded.
+
+```{r life quality vs social networks, echo=FALSE}
+# Life quality vs social networks
+# summary(df[,"act87"])
+
+# summary(df[,"act112"])
+
+quality_vs_socNetworks <- df[df$act87!="9" & !is.na(df$act87) & df$act112!="9" & !is.na(df$act112) & df$act112!="8" & df$q1!="9" & df$q1!="8",]
+
+quality_vs_socNetworks <- subset(quality_vs_socNetworks, select = c(act87, act112, q1))
+
+for (i in 1:nrow(quality_vs_socNetworks)){
+  if (quality_vs_socNetworks[i,"act87"]=="1" |  quality_vs_socNetworks[i,"act112"]=="1"){
+    quality_vs_socNetworks[i,"SN_user"] <- "Social Network User = Yes"
+  }
+  else{
+    quality_vs_socNetworks[i,"SN_user"] <- "Social Network User = No"
+  }
+}
+
+quality_vs_socNetworks_plot <- as.data.frame(with(quality_vs_socNetworks, table(SN_user,q1)))
+
+quality_vs_socNetworks_plot <- ddply(quality_vs_socNetworks_plot, .(SN_user), transform, p = Freq/sum(Freq))
+
+quality_vs_socNetworks_plot[,"q1"] <- revalue(quality_vs_socNetworks_plot[,"q1"], c("1"= "Excellent", "2" = "Very Good", "3" = "Good", "4" = "Fair", "5" = "Poor"))
+
+ggplot(quality_vs_socNetworks_plot, aes(q1, p)) + geom_bar(stat = "identity") + facet_grid(~SN_user) + labs(x = "Quality of Life", y = "Percent of Respondents", title = "Quality of Life vs Use of Social Networks")
+
+chisq.test(quality_vs_socNetworks[,"SN_user"], quality_vs_socNetworks[,"q1"])
+```
+
+
+### **Educaiton vs Income**
+
+Based on the graph below and the chi square test (low p value), it is evident that respondents with different education level have different income levels.  
+
+```{r income vs education, echo=FALSE}
+#Kirby's data frame
+kcdf <- df
+
+# use smartphone/Internet vs. edu level
+use.smartphone <- as.factor(kcdf[ , 'q12'])
+use.internet <- as.factor(kcdf[ , 'intuse'])
+edu <- as.factor(kcdf[ , 'educ2'])
+kcdf.edu <- as.data.frame(cbind(use.internet,use.smartphone))
+kcdf.edu <- cbind(kcdf.edu,edu)
+
+
+# edu vs. income 
+income <- as.factor(kcdf[ , 'inc'])
+kcdf.income <- cbind(kcdf.edu,income)
+
+# remove all 98 and 98, which stand for don't know and don't want to tell
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'edu'] != 98)
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'edu'] != 99)
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'income']!= 98)
+kcdf.income <- subset(kcdf.income, kcdf.income[ ,'income']!= 99)
+
+income.edu <- kcdf.income[ , c('edu','income')]
+
+# setting level names for income
+income.edu[,"income"] <- revalue(income.edu[,"income"], c("1" = "under 10k", "2" = "10-20k", "3" = "20-30k", "4" = "30-40k", "5" = "40-50k", "6" = "50-75k", "7" = "75-100k", "8" = "100-150k", "9" = "over 150k"))
+
+ggplot(income.edu, aes(edu, fill=income) ) +
+  geom_bar(position="fill") +
+  scale_x_discrete(labels = c("1" = "Grade 1-8", "2" = "Incomplete high school", "3" = "Complete high school", "4" = "Some college", "5" = "Associate degree", "6" = "Bachelor's", "7" = "Some postgrad", "8" = "Master's/phd/professional")) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+  labs(x = "", y = "Number of Respondents", title = "Income vs Education")
+
+chisq.test(kcdf.income[ ,'edu'],kcdf.income[,'income'])
+```
