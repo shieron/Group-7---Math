@@ -270,13 +270,14 @@ ggplot(quality_vs_socNetworks_plot, aes(q1, p)) + geom_bar(stat = "identity") + 
 
 chisq.test(quality_vs_socNetworks[,"SN_user"], quality_vs_socNetworks[,"q1"])
 
-
 #SAUL & UDIT's Part ----- Technology and Relationship
 
 # 1 Ex. Do people that met online [rel1, 1] perceive their quality of life higher [q1] or lower?
 
 # absolute values of quality of life and dating 
 
+
+```{r loading quality of life vs origin of relationships, echo=FALSE}
 indhap <- which(df$q1 < 6) 
 indmet <- which(df$rel1 == 1 |df$rel1 == 2)
 
@@ -285,24 +286,18 @@ finind <- intersect(indhap,indmet)
 hap <- df[finind, "q1"]
 met <- df[finind, "rel1"]
 
-ex<- table(hap,met)
+ex<- cbind.data.frame(hap,met)
+
 ex1df <- data.frame(ex)
-levels(ex1df$met) <- c("Met online", "Met offline")
 
-#absoloute numbers for happiness and how people met
-ggplot(data = ex1df , aes(x = hap, y = Freq)) + geom_bar(stat = "identity") + facet_grid(~ met) + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and Origin of Relationship")
+ex1df <- as.data.frame(with(ex, table(hap,met)))
 
+ex1df <- ddply(ex1df, .(met), transform, p = Freq/sum(Freq))
 
-indOffline <- which(df$rel1 == 1)
-finind2 <- intersect(indhap,indOffline)
+# happiness vs how people met
+ggplot(data = ex1df , aes(x = hap, y = p)) + geom_bar(stat = "identity") + facet_grid(~ met) + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life vs Origin of Relationship") + geom_text(aes(label = Freq), vjust=-.5)
 
-hap2 <- df[finind2, "q1"]
-met2 <- df[finind2, "rel1"]
-ex2<- table(hap2,met2)
-ex1df2 <- data.frame(ex2)
-
-ggplot(data = ex1df2 , aes(x = hap2, y = Freq)) + geom_bar(stat = "identity")  + scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor")) + labs( x = "Quality of Life" , y = "Frequency", title = "Quality of life and of Relationships Begun Online") 
-
+chisq.test(ex[,"met"],ex[,"hap"])
 
 
 # 2 Does technology assist in meeting a partner? 
