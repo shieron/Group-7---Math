@@ -1,12 +1,7 @@
 ---
 title: "Analysing Life Quality of Americans Through Relationships and Household Economics"
-author:
-- name: Jialiang Cui
-- name: Oksana Kovalenko
-- name: Saul Butt
-- name: Shieron Antolis
-- name: Udit Gupta
-output: html_document
+author: "Jialiang Cui, Oksana Kovalenko, Saul Butt, Shieron Antolis, Udit Gupta"
+output: pdf_document
 ---
 
 ```{r loading libraries, echo=FALSE, message = FALSE, warning=FALSE}
@@ -28,8 +23,8 @@ df <- read.csv("May_2013_Online_Dating_CSV.csv")
 okdf <- df
 
 okdf[, "sex"] <- as.factor(okdf[, "sex"])
-#summary(okdf[, "sex"])
-#str(okdf[, "sex"])
+# summary(okdf[, "sex"])
+# str(okdf[, "sex"])
 
 gender <- ggplot(data = okdf, aes(x = sex, fill = sex)) + 
   geom_bar() + scale_x_discrete(labels = c("1" = "Male", "2" = "Female")) +
@@ -39,8 +34,8 @@ gender <- ggplot(data = okdf, aes(x = sex, fill = sex)) +
 ```{r sexual orientation, echo=FALSE}
 # Sexual orientation plot
 okdf[, "lgbt"] <- as.factor(okdf[, "lgbt"])
-#summary(okdf$lgbt)
-#str(okdf$lgbt)
+# summary(okdf$lgbt)
+# str(okdf$lgbt)
 
 sexual_orientation <- ggplot(data = okdf, aes(x = lgbt)) + 
   geom_bar(fill='lightgreen',color='black') + 
@@ -52,8 +47,8 @@ sexual_orientation <- ggplot(data = okdf, aes(x = lgbt)) +
 ```{r Hispanic, echo=FALSE}
 # Hispanic
 okdf[, "hisp"] <- as.factor(okdf[, "hisp"])
-#summary(okdf$hisp)
-#str(okdf$hisp)
+# summary(okdf$hisp)
+# str(okdf$hisp)
 
 hispanic <- ggplot(data = okdf, aes(x = hisp)) + 
   geom_bar(fill='lightgreen',color='black') + 
@@ -62,9 +57,9 @@ hispanic <- ggplot(data = okdf, aes(x = hisp)) +
 ```
 
 ```{r age, echo=FALSE}
-#Age plot
-#summary(okdf$age)
-#str(okdf$age)
+# Age plot
+# summary(okdf$age)
+# str(okdf$age)
 median.age <- median(df$age)
 
 age <- ggplot(data = okdf, aes(x = age)) + 
@@ -78,8 +73,8 @@ age <- ggplot(data = okdf, aes(x = age)) +
 ```{r race, echo=FALSE}
 # Race plot
 okdf[, "race"] <- as.factor(okdf[, "race"])
-#summary(okdf$race)
-#str(okdf$race)
+# summary(okdf$race)
+# str(okdf$race)
 
 r_race <- ggplot(data = okdf, aes(x=reorder(race, -table(race)[race]))) + geom_bar(fill = "lightgreen", color = "black") + 
   scale_x_discrete(labels=c("1" = 'White',"2" = 'Black',"3" = 'Asian',"4" = 'Mixed',"5" = 'Native American',"6" = 'Other',"8" = "Don't Know","9" = 'Refused')) +
@@ -91,8 +86,8 @@ r_race <- ggplot(data = okdf, aes(x=reorder(race, -table(race)[race]))) + geom_b
 ```{r employment, echo=FALSE}
 # Employment plot
 okdf[, "emplnw"] <- as.factor(okdf[, "emplnw"])
-#summary(okdf$emplnw)
-#str(okdf$emplnw)
+# summary(okdf$emplnw)
+# str(okdf$emplnw)
 retired.percent <- 616/2252
 retired.percent <- 942/2252
 
@@ -107,8 +102,8 @@ employment <- ggplot(data = okdf, aes(x=reorder(emplnw, -table(emplnw)[emplnw]))
 ```{r income, echo=FALSE}
 # Income plot
 okdf[, "inc"] <- as.factor(okdf[, "inc"])
-#summary(okdf$inc)
-#str(okdf$inc)
+# summary(okdf$inc)
+# str(okdf$inc)
 
 income.refused <- 299/2252
 
@@ -122,8 +117,8 @@ income <- ggplot(data = okdf, aes(x = inc)) +
 ```{r education, echo=FALSE}
 # Education plot
 okdf[, "educ2"] <- as.factor(okdf[, "educ2"])
-#summary(okdf$educ2)
-#str(okdf$educ2)
+# summary(okdf$educ2)
+# str(okdf$educ2)
 
 education <- ggplot(data = okdf, aes(x = educ2)) + 
   geom_bar(fill = "lightgreen", colour = "black") + 
@@ -135,8 +130,8 @@ education <- ggplot(data = okdf, aes(x = educ2)) +
 ```{r household size, echo=FALSE}
 # Household size plot
 okdf[, "hh1"] <- as.factor(okdf[, "hh1"])
-#summary(okdf$hh1)
-#str(okdf$hh1)
+# summary(okdf$hh1)
+# str(okdf$hh1)
 
 household_size <- ggplot(data = okdf, aes(x = hh1)) + 
   geom_bar(fill = "lightgreen", colour = "black") + 
@@ -148,8 +143,8 @@ household_size <- ggplot(data = okdf, aes(x = hh1)) +
 ```{r marrital status, echo=FALSE}
 # Marital status
 okdf[, "mar"] <- as.factor(okdf[, "mar"])
-#summary(okdf$mar)
-#str(okdf$mar)
+# summary(okdf$mar)
+# str(okdf$mar)
 married.percent <- 1093/2552
 
 marital_status <- ggplot(data = okdf, aes(x = mar)) + 
@@ -162,8 +157,8 @@ marital_status <- ggplot(data = okdf, aes(x = mar)) +
 ```{r children, echo=FALSE}
 # Children
 okdf[, "par"] <- as.factor(okdf[, "par"])
-#summary(okdf$par)
-#str(okdf$par)
+# summary(okdf$par)
+# str(okdf$par)
 
 children <- ggplot(data = okdf, aes(x = par)) + 
   geom_bar(fill = "lightgreen", colour = "black") + 
@@ -175,8 +170,8 @@ children <- ggplot(data = okdf, aes(x = par)) +
 ```{r life quality, echo=FALSE}
 # Life quality
 okdf[, "q1"] <- as.factor(okdf[, "q1"])
-#summary(okdf$q1)
-#str(okdf$q1)
+# summary(okdf$q1)
+# str(okdf$q1)
 
 life_quality <- ggplot(data = okdf, aes(x = q1)) + geom_bar(fill = "lightgreen", colour = "black") +
   scale_x_discrete(labels = c("1"="Excellent", "2"="Very good", "3" = "Good", "4" = "Fair", "5" = "Poor", "8" = "Don't know", "9" ="Refused")) +
@@ -188,7 +183,7 @@ life_quality <- ggplot(data = okdf, aes(x = q1)) + geom_bar(fill = "lightgreen",
 
 Our dataset is compiled of categorical data received through telephone interviews in the USA in 2013. The dataset was originally used for a study on online dating, however through investigation of the variables, insight can be generated on the quality of life for a sample of Americans.
 
-With our core research topic focusing on the sample???s quality of life, the data offers two sections of analysis:    
+With our core research topic focusing on the sample's quality of life, the data offers two sections of analysis:    
 
 * Relationships  
 * Home Economics 
@@ -204,7 +199,6 @@ The following slides will provide an overview of the dataset.
 * Most respondents do not have a Latin American background
 
 ```{r describtive_stats_1, echo=FALSE , warning=FALSE, fig.width=10, fig.height=5}
-
 grid.arrange(gender, r_race, age, hispanic)
 ```
 
@@ -262,19 +256,19 @@ The findings from the graphs are as follows:
 
 lookmeet <- df$mar4
 lookmeet <-  ifelse(lookmeet>2,NA,lookmeet)
-usedod = df$date6
-usedod = ifelse(usedod>2,NA,usedod)
-dtf = as.data.frame(table(lookmeet,usedod))
+usedod <- df$date6
+usedod <- ifelse(usedod>2,NA,usedod)
+dtf <- as.data.frame(table(lookmeet,usedod))
 
 online.profile.looking <- ggplot(dtf,aes(x=lookmeet,y=Freq)) + geom_bar(stat="identity",aes(fill=usedod)) + scale_x_discrete(labels = c("1"="Looking for Patner", "2"="Not looking for Partner"))  + labs(x = "", y = "Number of Respndents", title = "Search for Romantic Partner\n & Online Dating") + theme(legend.position="bottom")+ geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1.5, position = "stack")+scale_fill_manual(name="Current Online Dating Profile",labels=c("Yes","No"),values = alpha(c("lightgreen", "lightblue")))
 
-# 5 For people that say it???s difficult / easy to meet people in their city/state, see how many people using online dating?
+# 5 For people that say it is difficult / easy to meet people in their city/state, see how many people using online dating?
 
-meet = df$meet
-meet = ifelse(meet>2,NA,meet)
-prof = df$date6
-prof = ifelse(prof>2,NA,prof)
-dtf3 = as.data.frame(table(meet,prof))
+meet <- df$meet
+meet <- ifelse(meet>2,NA,meet)
+prof <- df$date6
+prof <- ifelse(prof>2,NA,prof)
+dtf3 <- as.data.frame(table(meet,prof))
 
 online.profile.meeting <- ggplot(dtf3,aes(x=meet,y=Freq)) + geom_bar(stat="identity",aes(fill=prof)) + scale_x_discrete(labels = c("1"="Easy to meet", "2"="Difficult to meet")) + labs(x="",y="Number of Respondents", title = "Perceived Ease of Meeting People\n & Online Dating") + theme(legend.position="bottom")+geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1.5, position = "stack")+scale_fill_manual(name="Current Online Dating Profile",labels=c("Yes","No"),values = alpha(c("lightgreen", "lightblue")))
 
@@ -284,7 +278,7 @@ grid.arrange(online.profile.looking, online.profile.meeting, ncol = 2)
 
 #### **Role of Technology in Helping People Meet**
 
-Four ideas ??? what proportion of people have used phone, internet, social media or online dating to meet people.
+Four ideas – what proportion of people have used phone, internet, social media or online dating to meet people.
 
 * People prefer internet to meet people as opposed to phones. Most individuals in the sample use the internet to search for prospective people to meet, whereas on the phone respondents prefer to ask people out directly by calling them.
 *	Of the people that used the internet as means of dating (found in the lower two graphs _Using Social Media to meet people_ and _Using Online Dating (OD) to meet people_)
@@ -296,11 +290,11 @@ Four ideas ??? what proportion of people have used phone, internet, social media
 
 ```{r echo=FALSE, warning=FALSE, fig.width=10,fig.height=5}
 
-c1 = table(df$celldatea,df$celldateb)
-c1vec = as.vector(c1[1:2,1:2])
-names(c1vec) = c("calling / texting", "calling","texting","neither")
-c1df = data.frame(c1vec)
-p1 = ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="",title="Using Phones to meet people",y="Number of people")+geom_text(aes(label=c1vec), size=3,vjust=1.2, color='darkgreen')
+c1 <- table(df$celldatea,df$celldateb)
+c1vec <- as.vector(c1[1:2,1:2])
+names(c1vec) <- c("calling / texting", "calling","texting","neither")
+c1df <- data.frame(c1vec)
+p1 <- ggplot(c1df,aes(x = rownames(c1df),y = c1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="",title="Using Phones to meet people",y="Number of people")+geom_text(aes(label=c1vec), size=3,vjust=1.2, color='darkgreen')
 
 search = df$intdatec
 search = ifelse(search>2,NA,search)
@@ -309,18 +303,18 @@ askout = ifelse(askout>2,NA,askout)
 dtf1 = as.data.frame(table(search,askout))
 p2 = ggplot(dtf1,aes(x=search,y=Freq))+geom_bar(stat="identity",aes(fill=askout))+scale_x_discrete(labels = c("1"="Search online", "2"="Don't search online"))+scale_fill_discrete(name="Ask out",labels=c("Yes","No"))+labs(x="",title="Using Internet to meet people",y="Number of People")+geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1.5, position = "stack")
 
-follow = df$snsdate1e
-follow = ifelse(follow>2,NA,follow)
-ask = df$snsdate1c
-ask = ifelse(ask>2,NA,ask)
-dtf2 = as.data.frame(table(follow,ask))
-p3 = ggplot(dtf2,aes(x=follow,y=Freq))+geom_bar(stat="identity",aes(fill=ask))+scale_x_discrete(labels = c("1"="Follow/friend", "2"="Don't follow/friend"))+scale_fill_discrete(name="Ask out",labels=c("Yes","No"))+labs(x="",title="Using Social Media to meet people ",y="Number of People")+geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1, position = "stack")
+follow <- df$snsdate1e
+follow <- ifelse(follow>2,NA,follow)
+ask <- df$snsdate1c
+ask <- ifelse(ask>2,NA,ask)
+dtf2 <- as.data.frame(table(follow,ask))
+p3 <- ggplot(dtf2,aes(x=follow,y=Freq))+geom_bar(stat="identity",aes(fill=ask))+scale_x_discrete(labels = c("1"="Follow/friend", "2"="Don't follow/friend"))+scale_fill_discrete(name="Ask out",labels=c("Yes","No"))+labs(x="",title="Using Social Media to meet people ",y="Number of People")+geom_text(aes(label=Freq), size = 3, hjust = 0.5, vjust = 1, position = "stack")
 
-g1 = table(df$date5a,df$date5b)
-g1vec = as.vector(g1[1:2,1:2])
-names(g1vec) = c("used OD / got married","used OD","got married","neither")
-g1df = data.frame(g1vec)
-p4 = ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="",title="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), size=3,vjust=1.2, color='black')
+g1 <- table(df$date5a,df$date5b)
+g1vec <- as.vector(g1[1:2,1:2])
+names(g1vec) <- c("used OD / got married","used OD","got married","neither")
+g1df <- data.frame(g1vec)
+p4 <- ggplot(g1df,aes(x = rownames(g1df),y = g1vec)) + geom_bar(stat="identity",fill='lightgreen',color='black') + labs(x="",title="Using Online Dating (OD) to meet people",y="Number of people")+geom_text(aes(label=g1vec), size=3,vjust=1.2, color='black')
  
 grid.arrange(p1,p2,p3,p4,nrow=2)
 ```
@@ -409,17 +403,17 @@ We first divided the data into training and test sets, with 70% data in the trai
 
 
 library(caTools)
-df1 = subset(df, rel6 == 1 | rel6 == 2)
-df1$rel6 = as.factor(ifelse(df1$rel6==1,0,1)) #convert rel6 into a binomial variable
-df1$rel4a = as.factor(ifelse(df1$rel4a == 8 | df1$rel4a == 9,NA,df1$rel4a))
-df1$rel4b = as.factor(ifelse(df1$rel4b == 8 | df1$rel4b == 9,NA,df1$rel4b))
-df1$rel4c = as.factor(ifelse(df1$rel4c == 8 | df1$rel4c == 9,NA,df1$rel4c))
-df1$rel5 = as.factor(ifelse(df1$rel5 == 8 | df1$rel5 == 9,NA,df1$rel5))
+df1 <- subset(df, rel6 == 1 | rel6 == 2)
+df1$rel6 <- as.factor(ifelse(df1$rel6==1,0,1)) #convert rel6 into a binomial variable
+df1$rel4a <- as.factor(ifelse(df1$rel4a == 8 | df1$rel4a == 9,NA,df1$rel4a))
+df1$rel4b <- as.factor(ifelse(df1$rel4b == 8 | df1$rel4b == 9,NA,df1$rel4b))
+df1$rel4c <- as.factor(ifelse(df1$rel4c == 8 | df1$rel4c == 9,NA,df1$rel4c))
+df1$rel5 <- as.factor(ifelse(df1$rel5 == 8 | df1$rel5 == 9,NA,df1$rel5))
 set.seed(1000)
-split = sample.split(df1$rel6,SplitRatio=0.7) # divide the data into training and test sets, with 70% data in the training set
-train = subset(df1,split==TRUE) #Training set
-test = subset(df1, split==FALSE)# Test set
-model1 = glm(rel6~rel4a+rel4b+rel4c + rel5,data=train,family=binomial)# Logistic Regression model
+split <- sample.split(df1$rel6,SplitRatio=0.7) # divide the data into training and test sets, with 70% data in the training set
+train <- subset(df1,split==TRUE) #Training set
+test <- subset(df1, split==FALSE)# Test set
+model1 <- glm(rel6~rel4a+rel4b+rel4c + rel5,data=train,family=binomial)# Logistic Regression model
 screenreg(model1)
 ```
 
@@ -441,7 +435,7 @@ Out-of-sample accuracy = (11+36)/(11+19+12+36) ~ 60%
 ### **Quality of Life and Household Economics**
 
 
-The second aspect of this study focuses on how household economics, specifically family structure, education, income and available technology, relates to the respondent???s quality of life.
+The second aspect of this study focuses on how household economics, specifically family structure, education, income and available technology, relates to the respondent's quality of life.
 
 
 #### **Quality of Life vs presence of children in the household**
@@ -568,39 +562,49 @@ ggplot(data = subset(shdf, !is.na(shdf$smart2)),aes (x = inc, fill = smart2, ord
 Looking at the graph below, it appears that there may be a difference among income levels across different education levels. Chi square test and low p-value confirm this.
 
 ```{r income vs education, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10,fig.height=5}
-#Kirby's data frame
-df <- read.csv("May_2013_Online_Dating_CSV.csv")
+
 kcdf <- df
 
-# use smartphone/Internet vs. edu level
-use.smartphone <- as.factor(kcdf[ , 'q12'])
-use.internet <- as.factor(kcdf[ , 'intuse'])
-edu <- as.factor(kcdf[ , 'educ2'])
-kcdf.edu <- as.data.frame(cbind(use.internet,use.smartphone))
-kcdf.edu <- cbind(kcdf.edu,edu)
-
-
 # edu vs. income 
+edu <- as.factor(kcdf[ , 'educ2'])
 income <- as.factor(kcdf[ , 'inc'])
-kcdf.income <- cbind(kcdf.edu,income)
+income.edu <- cbind.data.frame(edu,income)
 
 # remove all 98 and 98, which stand for don't know and don't want to tell
-kcdf.income <- subset(kcdf.income, kcdf.income[ ,'edu'] != 98)
-kcdf.income <- subset(kcdf.income, kcdf.income[ ,'edu'] != 99)
-kcdf.income <- subset(kcdf.income, kcdf.income[ ,'income']!= 98)
-kcdf.income <- subset(kcdf.income, kcdf.income[ ,'income']!= 99)
+income.edu <- subset(income.edu, income.edu[ ,'edu'] != 98)
+income.edu <- subset(income.edu, income.edu[ ,'edu'] != 99)
+income.edu <- subset(income.edu, income.edu[ ,'income']!= 98)
+income.edu <- subset(income.edu, income.edu[ ,'income']!= 99)
 
-income.edu <- kcdf.income[ , c('edu','income')]
+income.edu[,"income"] <- as.numeric(income.edu[,"income"])
 
-# setting level names for income
-income.edu[,"income"] <- revalue(income.edu[,"income"], c("1" = "under 10k", "2" = "10-20k", "3" = "20-30k", "4" = "30-40k", "5" = "40-50k", "6" = "50-75k", "7" = "75-100k", "8" = "100-150k", "9" = "over 150k"))
+# Recoding income levels into fewer categories
+for (i in 1:nrow(income.edu)){
+  if (income.edu[i,"income"] < 4){
+    income.edu[i,"income.adj"] <- 1
+    }
+  else if (income.edu[i,"income"] < 7){
+    income.edu[i,"income.adj"] <- 2
+    }
+  else if (income.edu[i,"income"] < 9){
+    income.edu[i,"income.adj"] <- 3
+    }
+  else if (income.edu[i,"income"] < 10){
+    income.edu[i,"income.adj"] <- 4}
+}
 
-ggplot(income.edu, aes(edu, fill=income) ) +
+income.edu[,"income.adj"] <- as.factor(income.edu[,"income.adj"])
+
+# setting level names for new income categories
+income.edu[,"income.adj"] <- revalue(income.edu[,"income.adj"], c("1" = "under 30k", "2" = "30-75k", "3" = "75-150k", "4" = "150k+"))
+
+ggplot(income.edu, aes(edu, fill=income.adj) ) +
   geom_bar(position="fill") +
   scale_x_discrete(labels = c("1" = "Grade 1-8", "2" = "Incomplete high school", "3" = "Complete high school", "4" = "Some college", "5" = "Associate degree", "6" = "Bachelor's", "7" = "Some postgrad", "8" = "Master's/phd/professional")) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
   labs(x = "", y = "Number of Respondents", title = "Income vs Education")
 
+chisq.test(income.edu[, "edu"],income.edu[, "income.adj"])
 
 ```
  
@@ -632,21 +636,21 @@ library(rpart)
 library(rpart.plot)
 
 df2 <- read.csv("May_2013_Online_Dating_CSV.csv")
-df2$q1 = as.factor(ifelse((df2$q1 < 4),0,1))
-df2$intuse = as.factor(ifelse(df2$intuse == 8 | df2$intuse == 9,NA,df2$intuse))
-df2$q10a = as.factor(ifelse(df2$q10a == 8 | df2$q10a == 9,NA,df2$q10a))
-df2$q10b = as.factor(ifelse(df2$q10b == 8 | df2$q10b == 9,NA,df2$q10b))
-df2$mar = as.factor(ifelse(df2$mar == 8 | df2$mar == 9,NA,df2$mar))
-df2$par = as.factor(ifelse(df2$par == 8 | df2$par == 9,NA,df2$par))
-df2$educ2 = as.factor(ifelse(df2$educ2 == 98 | df2$educ2 == 99,NA,df2$educ2))
-df2$emplnw = as.factor(ifelse(df2$emplnw == 8 | df2$emplnw == 9,NA,df2$emplnw))
-df2$inc = as.factor(ifelse(df2$inc == 98 | df2$inc == 99,NA,df2$inc))
+df2$q1 <- as.factor(ifelse((df2$q1 < 4),0,1))
+df2$intuse <- as.factor(ifelse(df2$intuse == 8 | df2$intuse == 9,NA,df2$intuse))
+df2$q10a <- as.factor(ifelse(df2$q10a == 8 | df2$q10a == 9,NA,df2$q10a))
+df2$q10b <- as.factor(ifelse(df2$q10b == 8 | df2$q10b == 9,NA,df2$q10b))
+df2$mar <- as.factor(ifelse(df2$mar == 8 | df2$mar == 9,NA,df2$mar))
+df2$par <- as.factor(ifelse(df2$par == 8 | df2$par == 9,NA,df2$par))
+df2$educ2 <- as.factor(ifelse(df2$educ2 == 98 | df2$educ2 == 99,NA,df2$educ2))
+df2$emplnw <- as.factor(ifelse(df2$emplnw == 8 | df2$emplnw == 9,NA,df2$emplnw))
+df2$inc <- as.factor(ifelse(df2$inc == 98 | df2$inc == 99,NA,df2$inc))
 
 set.seed(1000)
-spl = sample.split(df2$q1,SplitRatio=0.7)
-train2 = subset(df2,spl==TRUE) #Training set
-test2 = subset(df2, spl==FALSE)# Test set
-qual = glm(q1~intuse + q10a + q10b + mar + par + educ2 + emplnw + inc, data = train2, family=binomial)
+spl <- sample.split(df2$q1,SplitRatio=0.7)
+train2 <- subset(df2,spl==TRUE) #Training set
+test2 <- subset(df2, spl==FALSE)# Test set
+qual <- glm(q1~intuse + q10a + q10b + mar + par + educ2 + emplnw + inc, data = train2, family=binomial)
 screenreg(qual)
 
 ```
@@ -668,7 +672,7 @@ From the table shown, we get a accuracy of 79%, which is a significant improveme
 To further understand and interpret our model, we have used CART (Classification And Regression Trees) model to predict quality of life using the same set of independent variables.  
 ```{r, echo=FALSE}
 
-qualtree = rpart(q1~intuse + q10a + q10b + mar + par + educ2 + emplnw + inc, data = train2,minbucket=10,method="class" )
+qualtree <- rpart(q1~intuse + q10a + q10b + mar + par + educ2 + emplnw + inc, data = train2,minbucket=10,method="class" )
 prp(qualtree)
 
 
@@ -678,8 +682,8 @@ The tree obtained from the CART model clearly shows that the quality of life is 
 
 ```{r, echo=FALSE}
 
-predictcart = predict(qualtree,newdata=test2,type="class")
-table(test2$q1,predictcart) # 79% accuracy
+predictcart <- predict(qualtree,newdata=test2,type="class")
+table(test2$q1,predictcart)  # 79% accuracy
 
 
 ```
